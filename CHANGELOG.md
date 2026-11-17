@@ -1,5 +1,10 @@
 # Változások
 
+## 1.0.2 – 2026-11-17
+- Eltávolítva a „Szám ellenőrzése” felület és a hozzá tartozó tesztelési metódus.
+- A valódi hívásszűrés, a névjegykivételek és a blokkolási napló változatlan.
+- Verziószám növelése.
+
 ## 1.0.1 – 2026-11-17
 - Tiszta, GitHubról klónozható Android Studio-projekt.
 - Jetpack Compose sablonfájlok nélkül; Android Views kezelőfelület.

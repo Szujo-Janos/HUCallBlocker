@@ -1,4 +1,4 @@
-# HU Call Blocker v1.0.1
+# HU Call Blocker v1.0.2
 
 **Offline, reklámmentes, magyar nyelvű Android-hívásszűrő.** Kotlin + Android Views (nem Jetpack Compose), Android 10 vagy újabb.
 
@@ -32,7 +32,8 @@ A korábbi Android Studio-projekt `ui/theme/Color.kt`, `Theme.kt` és `Type.kt` 
 
 - Egységtesztek: `./gradlew testDebugUnitTest` (Windows: `gradlew.bat testDebugUnitTest`)
 - APK: Android Studio → **Build → Build APK(s)**, majd `app/build/outputs/apk/debug/app-debug.apk`
-- A számteszt nem indít valós hívást, és nem bizonyítja a gyártói rendszer hívásszűrésének működését.
+
+A valódi hívásszűrést kizárólag bejövő hívással lehet ellenőrizni a készüléken.
 
 ## Adatvédelem
 

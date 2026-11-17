@@ -10,11 +10,9 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
 import android.view.WindowInsets
 import android.widget.Button
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Switch
@@ -39,8 +37,6 @@ class MainActivity : Activity() {
     private lateinit var enabledSwitch: Switch
     private lateinit var contactsSwitch: Switch
     private lateinit var contactHint: TextView
-    private lateinit var testInput: EditText
-    private lateinit var testResult: TextView
     private lateinit var history: LinearLayout
     private var refreshing = false
 
@@ -122,25 +118,6 @@ class MainActivity : Activity() {
                 refreshContactHint()
             }
         }
-
-        section("SZÁM ELLENŐRZÉSE")
-        val testCard = card()
-        testInput = EditText(this).apply {
-            hint = "Például: +49 151 12345678"
-            textSize = 16f
-            setSingleLine(true)
-            setTextColor(white)
-            setHintTextColor(muted)
-            inputType = InputType.TYPE_CLASS_PHONE
-            background = rounded(0xFF0A1C2A.toInt(), 12, 0xFF355061.toInt())
-            setPadding(dp(14), 0, dp(14), 0)
-        }
-        add(testCard, testInput, 0, dp(52))
-        add(testCard, button("Szám tesztelése").apply {
-            setOnClickListener { testNumber() }
-        }, 12, dp(48))
-        testResult = label("A teszt nem hajt végre valódi hívásblokkolást.", 13f, muted)
-        add(testCard, testResult, 12)
 
         section("BLOKKOLÁSI NAPLÓ")
         val logCard = card()
@@ -257,23 +234,6 @@ class MainActivity : Activity() {
             }
             refreshSwitches()
         }
-    }
-
-    private fun testNumber() {
-        val result = ForeignNumberClassifier.classify(testInput.text.toString())
-        val enabled = SettingsStore.enabled(this)
-        testResult.text = when (result) {
-            ForeignNumberClassifier.Classification.UNKNOWN ->
-                "Ismeretlen vagy helyi formátum: biztonságból átengedve."
-            ForeignNumberClassifier.Classification.HUNGARIAN ->
-                "Magyar (+36) szám: átengedve."
-            ForeignNumberClassifier.Classification.FOREIGN ->
-                if (enabled) "Külföldi szám: blokkolásra jelölve (névjegykivétel nélkül)."
-                else "Külföldi szám, de a szűrés jelenleg kikapcsolva."
-        }
-        testResult.setTextColor(
-            if (result == ForeignNumberClassifier.Classification.FOREIGN && enabled) red else teal
-        )
     }
 
     private fun refreshHistory() {
