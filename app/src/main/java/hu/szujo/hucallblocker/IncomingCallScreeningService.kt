@@ -37,5 +37,7 @@ class IncomingCallScreeningService : CallScreeningService() {
         if (shouldBlock) {
             runCatching { BlockedCallStore.add(this, number ?: "ismeretlen") }
         }
+        // A hívás eldöntése után szinkronizáljuk az állapotjelzést.
+        runCatching { ProtectionNotification.sync(this) }
     }
 }

@@ -1,0 +1,31 @@
+name: Export modified Android Studio files
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - ".github/workflows/export-modified.yml"
+  workflow_dispatch:
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect modified source files
+        uses: actions/upload-artifact@v4
+        with:
+          name: HUCallBlocker-v1.0.3-modositott-fajlok
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt
+            app/src/main/java/hu/szujo/hucallblocker/ProtectionNotification.kt
+            app/src/main/java/hu/szujo/hucallblocker/BootCompletedReceiver.kt
+            app/src/main/java/hu/szujo/hucallblocker/IncomingCallScreeningService.kt
+            app/src/main/res/drawable/ic_status_shield.xml
+            app/src/main/AndroidManifest.xml
+            app/build.gradle.kts
+            README.md
+            CHANGELOG.md

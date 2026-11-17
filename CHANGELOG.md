@@ -1,13 +1,15 @@
 # Változások
 
+## 1.0.3 – 2026-11-17
+- Főképernyő újratervezése: modernebb sötét megjelenés, jobb státuszkártya, szekciók, kapcsolók és napló.
+- Hívásszűrési szerepkör és aktív kapcsoló alapján megjelenő állapotsori pajzsikon.
+- Értesítési jogosultság kezelése Android 13+-on.
+- Újraindításkor BOOT_COMPLETED hatására frissülő állapotértesítés.
+- A hívásblokkolás szabályai és a naplózás változatlanok.
+
 ## 1.0.2 – 2026-11-17
-- Eltávolítva a „Szám ellenőrzése” felület és a hozzá tartozó tesztelési metódus.
-- A valódi hívásszűrés, a névjegykivételek és a blokkolási napló változatlan.
-- Verziószám növelése.
+- A funkció nélküli számszimulációs panel eltávolítva.
+- Kotlin UI-kód és projektverzió frissítve.
 
 ## 1.0.1 – 2026-11-17
-- Tiszta, GitHubról klónozható Android Studio-projekt.
-- Jetpack Compose sablonfájlok nélkül; Android Views kezelőfelület.
-- Hívásszűrő szolgáltatás Android 10+-hoz.
-- Névjegykivétel, szerepkör-engedélyezés, hívásszámteszt, 100 tételes helyi napló.
-- Ellenőrzésre vár: Android Studio fordítás és valódi telefonos hívásteszt.
+- Compose nélküli Android Studio-projekt, hívásszűrő szolgáltatás, helyi napló.
