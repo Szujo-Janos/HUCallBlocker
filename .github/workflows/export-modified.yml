@@ -1,4 +1,4 @@
-name: Export HU Call Blocker 1.1.1 ZIPs
+name: Export HU Call Blocker 1.1.2 ZIPs
 on:
   push:
     branches: [main]
@@ -15,19 +15,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Package full Android Studio project
-        run: git archive --format=zip --output=HUCallBlocker_1.1.1_teljes_projekt.zip HEAD
+        run: git archive --format=zip --output=HUCallBlocker_1.1.2_teljes_projekt.zip HEAD
       - name: Package modified files
         run: |
-          zip -q HUCallBlocker_1.1.1_modositott_fajlok.zip             app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt             app/src/main/java/hu/szujo/hucallblocker/SplashExperience.kt             app/src/main/res/values/styles.xml             app/build.gradle.kts README.md CHANGELOG.md
+          zip -q HUCallBlocker_1.1.2_modositott_fajlok.zip             app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt             app/src/main/java/hu/szujo/hucallblocker/SplashExperience.kt             app/src/main/res/values/styles.xml             app/src/main/res/drawable/ic_splash_small.xml             app/src/main/java/hu/szujo/hucallblocker/HuApp.kt             app/build.gradle.kts README.md CHANGELOG.md
       - name: Upload full project
         uses: actions/upload-artifact@v4
         with:
-          name: HUCallBlocker-v1.1.1-full-project
-          path: HUCallBlocker_1.1.1_teljes_projekt.zip
+          name: HUCallBlocker-v1.1.2-full-project
+          path: HUCallBlocker_1.1.2_teljes_projekt.zip
           retention-days: 30
       - name: Upload modified files
         uses: actions/upload-artifact@v4
         with:
-          name: HUCallBlocker-v1.1.1-modified-files
-          path: HUCallBlocker_1.1.1_modositott_fajlok.zip
+          name: HUCallBlocker-v1.1.2-modified-files
+          path: HUCallBlocker_1.1.2_modositott_fajlok.zip
           retention-days: 30
