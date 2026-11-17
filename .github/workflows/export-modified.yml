@@ -1,28 +1,43 @@
-name: Export v1.1.0 modified files
+name: Export HU Call Blocker 1.1.0 ZIPs
 on:
   push:
     branches: [main]
     paths:
       - "app/**"
       - "build.gradle.kts"
+      - "README.md"
       - ".github/workflows/export-modified.yml"
   workflow_dispatch:
+
 jobs:
-  zip:
+  packages:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Package modified Android Studio files
+      - name: Package full Android Studio project
+        run: git archive --format=zip --output=HUCallBlocker_1.1.0_teljes_projekt.zip HEAD
+      - name: Package modified files
+        run: |
+          cat > TORLENDO_REGI_FAJLOK.txt <<'EOT'
+          v1.0.5-rol frissiteskor a kovetkezo regi XML-allomanyokat torold:
+          app/src/main/res/values/themes.xml
+          app/src/main/res/values/colors.xml
+          app/src/main/res/layout/activity_main.xml
+          app/src/main/res/layout/item_log_entry.xml
+          app/src/main/res/drawable/bg_chip_green.xml
+          app/src/main/res/drawable/bg_chip_red.xml
+          Javasolt: a teljes tiszta v1.1.0 projekt klonozasa a GitHubrol.
+          EOT
+          zip -q HUCallBlocker_1.1.0_modositott_fajlok.zip             build.gradle.kts app/build.gradle.kts app/src/main/AndroidManifest.xml             app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt             app/src/main/java/hu/szujo/hucallblocker/HuApp.kt             app/src/main/res/values/styles.xml README.md CHANGELOG.md TORLENDO_REGI_FAJLOK.txt
+      - name: Upload full project
         uses: actions/upload-artifact@v4
         with:
-          name: HUCallBlocker-v1.1.0-modositott-fajlok
+          name: HUCallBlocker-v1.1.0-full-project
+          path: HUCallBlocker_1.1.0_teljes_projekt.zip
           retention-days: 30
-          if-no-files-found: error
-          path: |
-            build.gradle.kts
-            app/build.gradle.kts
-            app/src/main/AndroidManifest.xml
-            app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt
-            app/src/main/res/values/styles.xml
-            README.md
-            CHANGELOG.md
+      - name: Upload modified files
+        uses: actions/upload-artifact@v4
+        with:
+          name: HUCallBlocker-v1.1.0-modified-files
+          path: HUCallBlocker_1.1.0_modositott_fajlok.zip
+          retention-days: 30
