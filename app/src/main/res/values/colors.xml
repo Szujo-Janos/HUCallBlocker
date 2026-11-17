@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="screen_bg">#FFF7F9FC</color>
+    <color name="card_bg">#FFFFFFFF</color>
+    <color name="card_stroke">#FFE4E9F0</color>
+    <color name="text_primary">#FF0E1726</color>
+    <color name="text_secondary">#FF667085</color>
+    <color name="text_caption">#FF98A2B3</color>
+    <color name="accent">#FF0AB08A</color>
+    <color name="status_green">#FF0AB08A</color>
+    <color name="status_red">#FFF04452</color>
+    <color name="status_orange">#FFF59E0B</color>
+    <color name="hero_green_soft">#FFE8FFF7</color>
+    <color name="hero_red_soft">#FFFFF0F1</color>
+    <color name="hero_orange_soft">#FFFFF8EA</color>
+    <color name="icon_tile_bg">#FFF1FFFB</color>
+    <!-- Régi Android Studio színnevek támogatása -->
+    <color name="teal">#FF0AB08A</color>
+    <color name="background">#FFF7F9FC</color>
+</resources>
