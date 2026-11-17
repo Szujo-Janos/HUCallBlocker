@@ -1,5 +1,13 @@
 # Változások
 
+## 1.1.3 – 2026-11-17
+- A felső fejléc a státuszsáv és kijelzőkivágás alá kerül (safeDrawing Insets).
+- Kisebb kijelzőkhöz alkalmazkodó főoldali kártyaméretek és távolságok.
+- A frissítésgomb a fejléc jobb oldalára költözött.
+- A blokkolási motor, értesítések és négyfüles navigáció változatlan.
+- Verziószám növelve.
+
+
 ## 1.1.2 – 2026-11-17
 - A túl nagy HU-pajzs lecserélve külön, visszafogott kis vektorikonra a natív Android splashben.
 - Gyorsabb, 85 ms-os átmenet az eredeti animált Compose intróba.

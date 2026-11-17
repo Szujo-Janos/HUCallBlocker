@@ -66,7 +66,7 @@ internal fun HuApp(
     MaterialTheme(colorScheme = scheme) {
         Scaffold(
             containerColor = light,
-            topBar = { Header(state.active) },
+            topBar = { Header(state.active, refresh) },
             bottomBar = {
                 NavigationBar(containerColor = Color.White) {
                     val tabs = listOf(
@@ -89,7 +89,7 @@ internal fun HuApp(
         ) { padding ->
             Crossfade(targetState = page, animationSpec = tween(260), label = "tabFade") { selected ->
                 when (selected) {
-                    0 -> Home(state, padding, enableRole, refresh)
+                    0 -> Home(state, padding, enableRole)
                     1 -> Filters(state, padding, setEnabled, setContacts, openPrivateBlocking)
                     2 -> LogPage(state, padding, clearCalls, refresh)
                     else -> Options(state, padding, enableRole, requestNotifications, openPrivateBlocking)
@@ -100,19 +100,39 @@ internal fun HuApp(
 }
 
 @Composable
-private fun Header(active: Boolean) {
+private fun Header(active: Boolean, onRefresh: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().background(light)
-            .padding(horizontal = 20.dp, vertical = 10.dp),
+        Modifier
+            .fillMaxWidth()
+            .background(light)
+            // Android 15+ alatt a rendszer a státuszsáv mögé rajzolhat.
+            // A fejléc mindig a biztonságos felső (és oldalsó) területen legyen.
+            .windowInsetsPadding(
+                WindowInsets.safeDrawing.only(
+                    WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+                )
+            )
+            .padding(horizontal = 20.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(painterResource(R.drawable.ic_shield), "HU pajzs", Modifier.size(51.dp))
+        Image(
+            painterResource(R.drawable.ic_shield),
+            contentDescription = "HU pajzs",
+            modifier = Modifier.size(43.dp)
+        )
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
-            Text("HU CALL BLOCKER", color = ink, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
-            Text("CALL PROTECTION", color = grey, fontSize = 10.sp, letterSpacing = 1.6.sp)
+            Text("HU CALL BLOCKER", color = ink, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
+            Text("CALL PROTECTION", color = grey, fontSize = 9.sp, letterSpacing = 1.3.sp)
         }
-        Box(Modifier.size(10.dp).background(if (active) mint else red, CircleShape))
+        Box(Modifier.size(9.dp).background(if (active) mint else red, CircleShape))
+        Spacer(Modifier.width(8.dp))
+        IconButton(
+            onClick = onRefresh,
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(Icons.Filled.Refresh, contentDescription = "Állapot frissítése", tint = forest)
+        }
     }
 }
 
@@ -127,32 +147,45 @@ private fun SectionTitle(title: String, subtitle: String? = null) {
 @Composable
 private fun Home(
     state: ScreenState, padding: PaddingValues,
-    enableRole: () -> Unit, refresh: () -> Unit
+    enableRole: () -> Unit
 ) {
-    Column(
-        Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(17.dp)
+    // A kis kijelzőkön összehúzzuk a kártyák közötti teret.
+    // Nagy betűméretnél továbbra is görgethető, ezért nem vág le tartalmat.
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize().padding(padding)
     ) {
-        AnimatedStatus(state, enableRole)
-        Text("ÁTTEKINTÉS", color = grey, fontSize = 11.sp,
-            letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Metric("LETILTVA", state.calls.size.toString(), Icons.Filled.Block, Modifier.weight(1f))
-            Metric("MAGYAR HÍVÁS", "+36", Icons.Filled.Check, Modifier.weight(1f))
-        }
-        InfoTile(
-            Icons.Filled.Security, "Aktív szabály",
-            if (state.enabled) "Külföldi előhívók tiltása" else "Szűrés szünetel"
-        )
-        OutlinedButton(onClick = refresh, modifier = Modifier.fillMaxWidth()) {
-            Text("Állapot frissítése")
+        val compact = maxHeight < 570.dp
+        val gap = if (compact) 10.dp else 14.dp
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = if (compact) 8.dp else 12.dp),
+            verticalArrangement = Arrangement.spacedBy(gap)
+        ) {
+            AnimatedStatus(state, enableRole, compact)
+            Text(
+                "ÁTTEKINTÉS",
+                color = grey,
+                fontSize = 11.sp,
+                letterSpacing = 1.3.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Metric("LETILTVA", state.calls.size.toString(), Icons.Filled.Block, Modifier.weight(1f), compact)
+                Metric("MAGYAR HÍVÁS", "+36", Icons.Filled.Check, Modifier.weight(1f), compact)
+            }
+            InfoTile(
+                Icons.Filled.Security, "Aktív szabály",
+                if (state.enabled) "Külföldi előhívók tiltása" else "Szűrés szünetel",
+                compact = compact
+            )
         }
     }
 }
 
 @Composable
-private fun AnimatedStatus(state: ScreenState, enableRole: () -> Unit) {
+private fun AnimatedStatus(state: ScreenState, enableRole: () -> Unit, compact: Boolean) {
     val activeColor = when {
         state.active -> forest
         !state.roleHeld -> red
@@ -196,23 +229,23 @@ private fun AnimatedStatus(state: ScreenState, enableRole: () -> Unit) {
             colors = CardDefaults.cardColors(containerColor = bg),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(Modifier.padding(22.dp)) {
+            Column(Modifier.padding(if (compact) 17.dp else 20.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(8.dp).background(activeColor, CircleShape))
                     Spacer(Modifier.width(8.dp))
                     Text(tag, color = activeColor, fontSize = 11.sp,
                         letterSpacing = 1.sp, fontWeight = FontWeight.Bold)
                 }
-                Spacer(Modifier.height(22.dp))
+                Spacer(Modifier.height(if (compact) 13.dp else 18.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text(title, fontSize = 26.sp, fontWeight = FontWeight.Black,
-                            color = ink, lineHeight = 30.sp)
-                        Spacer(Modifier.height(9.dp))
+                        Text(title, fontSize = if (compact) 23.sp else 26.sp, fontWeight = FontWeight.Black,
+                            color = ink, lineHeight = if (compact) 27.sp else 30.sp)
+                        Spacer(Modifier.height(if (compact) 6.dp else 9.dp))
                         Text(text, fontSize = 13.sp, color = grey, lineHeight = 18.sp)
                     }
                     Box(
-                        Modifier.size(87.dp).scale(if (state.active) scale else 1f)
+                        Modifier.size(if (compact) 71.dp else 83.dp).scale(if (state.active) scale else 1f)
                             .background(
                                 Brush.radialGradient(
                                     listOf(Color.White, if (state.active) Color(0xFFA8F0D4) else Color(0xFFF8C8CC))
@@ -221,11 +254,11 @@ private fun AnimatedStatus(state: ScreenState, enableRole: () -> Unit) {
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Image(painterResource(R.drawable.ic_shield), "HU védelem", Modifier.size(65.dp))
+                        Image(painterResource(R.drawable.ic_shield), "HU védelem", Modifier.size(if (compact) 54.dp else 63.dp))
                     }
                 }
                 if (state.roleAvailable && !state.roleHeld) {
-                    Spacer(Modifier.height(18.dp))
+                    Spacer(Modifier.height(if (compact) 12.dp else 17.dp))
                     Button(onClick = enableRole, modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(13.dp)) {
                         Text("Hívásszűrés engedélyezése")
@@ -237,33 +270,33 @@ private fun AnimatedStatus(state: ScreenState, enableRole: () -> Unit) {
 }
 
 @Composable
-private fun Metric(label: String, value: String, icon: ImageVector, modifier: Modifier) {
+private fun Metric(label: String, value: String, icon: ImageVector, modifier: Modifier, compact: Boolean) {
     Card(modifier, shape = RoundedCornerShape(21.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)) {
-        Column(Modifier.padding(18.dp)) {
+        Column(Modifier.padding(if (compact) 13.dp else 17.dp)) {
             Icon(icon, null, tint = forest, modifier = Modifier.size(23.dp))
-            Spacer(Modifier.height(14.dp))
-            Text(value, color = ink, fontWeight = FontWeight.ExtraBold, fontSize = 27.sp)
+            Spacer(Modifier.height(if (compact) 8.dp else 13.dp))
+            Text(value, color = ink, fontWeight = FontWeight.ExtraBold, fontSize = if (compact) 24.sp else 27.sp)
             Text(label, color = grey, fontSize = 10.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
 
 @Composable
-private fun InfoTile(icon: ImageVector, title: String, subtitle: String, click: (() -> Unit)? = null) {
+private fun InfoTile(icon: ImageVector, title: String, subtitle: String, click: (() -> Unit)? = null, compact: Boolean = false) {
     Card(
         modifier = Modifier.fillMaxWidth().then(if (click == null) Modifier else Modifier.clickable(onClick = click)),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Row(Modifier.padding(17.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.padding(if (compact) 13.dp else 17.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(43.dp).background(Color(0xFFE7FAF4), RoundedCornerShape(13.dp)),
+                Modifier.size(if (compact) 37.dp else 43.dp).background(Color(0xFFE7FAF4), RoundedCornerShape(13.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(icon, null, tint = forest, modifier = Modifier.size(23.dp))
             }
-            Spacer(Modifier.width(14.dp))
+            Spacer(Modifier.width(if (compact) 11.dp else 14.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, color = ink, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Text(subtitle, color = grey, fontSize = 12.sp, lineHeight = 16.sp)
