@@ -415,7 +415,7 @@ private fun Options(
             .padding(horizontal = 20.dp, vertical = 17.dp),
         verticalArrangement = Arrangement.spacedBy(13.dp)
     ) {
-        SectionTitle("Opciók", "HU Call Blocker 1.1.0")
+        SectionTitle("Opciók", "HU Call Blocker 1.1.2")
         InfoTile(
             Icons.Filled.Security, "Hívásszűrési engedély",
             if (state.roleHeld) "Rendben" else "Engedély szükséges",

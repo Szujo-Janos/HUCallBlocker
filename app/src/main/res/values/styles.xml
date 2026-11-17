@@ -10,7 +10,7 @@
     </style>
     <style name="Theme.HUCallBlocker.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#051721</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_shield</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_small</item>
         <item name="android:statusBarColor">#051721</item>
         <item name="android:navigationBarColor">#051721</item>
         <item name="android:windowLightStatusBar">false</item>

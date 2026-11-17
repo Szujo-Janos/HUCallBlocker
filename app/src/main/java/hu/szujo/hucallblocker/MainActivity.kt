@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         splash.setOnExitAnimationListener { provider ->
             provider.view.animate()
                 .alpha(0f)
-                .setDuration(160L)
+                .setDuration(85L)
                 .withEndAction { provider.remove() }
                 .start()
         }

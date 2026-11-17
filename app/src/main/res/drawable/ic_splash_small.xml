@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 288 dp-es rendszer-splash vászon: a HU-motívum szándékosan kis méretű.
+     A launcher logó külön, az ic_shield.xml fájlban marad. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+    <!-- Visszafogott, 84 dp széles kontúros pajzs -->
+    <path
+        android:fillColor="#FF0D3038"
+        android:strokeColor="#FF19E7BE"
+        android:strokeWidth="3.6"
+        android:strokeLineJoin="round"
+        android:pathData="M144,95 L184,111 L184,145 C184,168 169,187 144,199 C119,187 104,168 104,145 L104,111 Z" />
+    <!-- H -->
+    <path android:fillColor="#FFF1FFFB"
+        android:pathData="M119,127 L125,127 L125,138 L137,138 L137,127 L143,127 L143,159 L137,159 L137,144 L125,144 L125,159 L119,159 Z"/>
+    <!-- U -->
+    <path android:fillColor="#FFF1FFFB"
+        android:pathData="M150,127 L156,127 L156,147 C156,152 158,154 162,154 C166,154 168,152 168,147 L168,127 L174,127 L174,147 C174,156 170,161 162,161 C154,161 150,156 150,147 Z"/>
+    <!-- apró jelzőfénypont -->
+    <path android:fillColor="#FF8EFFE7"
+        android:pathData="M181,173 m-3.4,0 a3.4,3.4 0,1 0,6.8 0 a3.4,3.4 0,1 0,-6.8 0"/>
+</vector>
