@@ -18,7 +18,10 @@ jobs:
         run: git archive --format=zip --output=HUCallBlocker_1.1.3_teljes_projekt.zip HEAD
       - name: Package modified files
         run: |
-          zip -q HUCallBlocker_1.1.3_modositott_fajlok.zip             app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt             app/src/main/java/hu/szujo/hucallblocker/SplashExperience.kt             app/src/main/res/values/styles.xml             app/src/main/res/drawable/ic_splash_small.xml             app/src/main/java/hu/szujo/hucallblocker/HuApp.kt             app/build.gradle.kts README.md CHANGELOG.md
+          zip -q HUCallBlocker_1.1.3_modositott_fajlok.zip \
+            app/src/main/java/hu/szujo/hucallblocker/HuApp.kt \
+            app/build.gradle.kts \
+            README.md CHANGELOG.md
       - name: Upload full project
         uses: actions/upload-artifact@v4
         with:
