@@ -13,3 +13,11 @@ Thumbs.db
 *.hprof
 *.apk
 *.aab
+
+# Release signing credentials must never be committed
+*.jks
+*.keystore
+*.p12
+*.pfx
+*release_key_info*.txt
+signing-private/
