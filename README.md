@@ -1,8 +1,14 @@
-# HU Call Blocker 1.1.0 — Jetpack Compose
+# HU Call Blocker 1.1.1 — Jetpack Compose
 
 Android 10+ (API 29), magyar nyelvű offline hívásszűrő. 
 A korábbi XML-es felületet Kotlin Jetpack Compose / Material 3 váltja. 
 A hívásszűrő és az előző verziókban mentett kapcsolók változatlanok.
+
+## Új animált indítás (1.1.1)
+- Egységes sötét Android-rendszer splash és teljes képernyős Compose animáció
+- Lélegző HU-pajzs, forgó kettős fénygyűrű, lágyan belépő felirat és indítási fénycsík
+- A főképernyő először az animáció befejezésekor jelenik meg; a háttérben a hívásszűrés működése változatlan
+- Nincs hálózati betöltés vagy kötelező várakozás a hívásszűrésnek; az animáció csak az app újraindításakor jelenik meg
 
 ## Megújult kezelőfelület
 - natív AndroidX SplashScreen HU logóval, rövid kilépési animációval

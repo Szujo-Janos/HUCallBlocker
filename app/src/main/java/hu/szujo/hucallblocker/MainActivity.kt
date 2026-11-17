@@ -50,41 +50,71 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        // A rendszer natív splash-e azonos színű, mint a Compose intró.
+        // Így nincs fehér villanás a két animáció között.
         splash.setOnExitAnimationListener { provider ->
-            provider.view.animate().alpha(0f).scaleX(1.04f).scaleY(1.04f)
-                .setDuration(250).withEndAction { provider.remove() }.start()
+            provider.view.animate()
+                .alpha(0f)
+                .setDuration(160L)
+                .withEndAction { provider.remove() }
+                .start()
         }
+        setSplashBars()
+        refresh()
+
+        setContent {
+            var showIntro by androidx.compose.runtime.saveable.rememberSaveable {
+                mutableStateOf(true)
+            }
+
+            if (showIntro) {
+                SplashExperience(
+                    onFinished = {
+                        showIntro = false
+                        setMainBars()
+                    }
+                )
+            } else {
+                HuApp(
+                    state = state,
+                    enableRole = ::requestRole,
+                    setEnabled = {
+                        SettingsStore.setEnabled(this, it)
+                        refresh()
+                        if (state.active && !state.notifyAllowed) askNotifications()
+                    },
+                    setContacts = {
+                        if (!it && !ContactChecker.hasPermission(this)) {
+                            contactLauncher.launch(Manifest.permission.READ_CONTACTS)
+                        } else {
+                            SettingsStore.setAllowContacts(this, it)
+                            refresh()
+                        }
+                    },
+                    requestNotifications = ::askNotifications,
+                    openPrivateBlocking = ::openPrivateBlocking,
+                    clearCalls = { BlockedCallStore.clear(this); refresh() },
+                    refresh = ::refresh
+                )
+            }
+        }
+    }
+
+    private fun setSplashBars() {
+        window.statusBarColor = android.graphics.Color.rgb(5, 23, 33)
+        window.navigationBarColor = android.graphics.Color.rgb(5, 23, 33)
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = 0
+    }
+
+    private fun setMainBars() {
         window.statusBarColor = android.graphics.Color.rgb(245, 248, 252)
         window.navigationBarColor = android.graphics.Color.WHITE
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility =
             android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
                 android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-
-        refresh()
-        setContent {
-            HuApp(
-                state = state,
-                enableRole = ::requestRole,
-                setEnabled = {
-                    SettingsStore.setEnabled(this, it)
-                    refresh()
-                    if (state.active && !state.notifyAllowed) askNotifications()
-                },
-                setContacts = {
-                    if (!it && !ContactChecker.hasPermission(this)) {
-                        contactLauncher.launch(Manifest.permission.READ_CONTACTS)
-                    } else {
-                        SettingsStore.setAllowContacts(this, it)
-                        refresh()
-                    }
-                },
-                requestNotifications = ::askNotifications,
-                openPrivateBlocking = ::openPrivateBlocking,
-                clearCalls = { BlockedCallStore.clear(this); refresh() },
-                refresh = ::refresh
-            )
-        }
     }
 
     override fun onResume() {
