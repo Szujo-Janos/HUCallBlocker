@@ -40,6 +40,6 @@ Az alkalmazás saját, privát beállítástárában tárolja a blokkolási napl
 
 ## Jelenlegi állapot
 
-A forráskód előkészített, és a Compose-függőségeket eltávolítottuk. **Android SDK-s build és valós készülékes hívásteszt még nem történt**, ezért a következő ellenőrzés Android Studióban szükséges.
+A GitHub Actions **2026-11-17-én sikeresen lefuttatta** a Kotlin-egységteszteket és az Android debug APK fordítását (futtatás: https://github.com/Szujo-Janos/HUCallBlocker/actions/runs/44099765608). **Valós telefonos hívásteszt még nem történt**; Xiaomi/HyperOS készüléken ezt külön ellenőrizni kell.
 
 Hivatalos Android-dokumentáció: https://developer.android.com/reference/android/telecom/CallScreeningService
