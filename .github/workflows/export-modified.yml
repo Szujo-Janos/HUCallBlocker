@@ -1,40 +1,28 @@
-name: Export v1.0.5 source files
-
+name: Export v1.1.0 modified files
 on:
   push:
     branches: [main]
     paths:
       - "app/**"
+      - "build.gradle.kts"
       - ".github/workflows/export-modified.yml"
   workflow_dispatch:
-
 jobs:
   zip:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Package Android Studio files
+      - name: Package modified Android Studio files
         uses: actions/upload-artifact@v4
         with:
-          name: HUCallBlocker-v1.0.5-javitott-fajlok
+          name: HUCallBlocker-v1.1.0-modositott-fajlok
           retention-days: 30
           if-no-files-found: error
           path: |
-            app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt
-            app/src/main/java/hu/szujo/hucallblocker/ProtectionNotification.kt
-            app/src/main/java/hu/szujo/hucallblocker/BootCompletedReceiver.kt
-            app/src/main/java/hu/szujo/hucallblocker/IncomingCallScreeningService.kt
-            app/src/main/res/drawable/ic_shield.xml
-            app/src/main/res/drawable/ic_status_shield.xml
-            app/src/main/res/drawable/bg_chip_green.xml
-            app/src/main/res/drawable/bg_chip_red.xml
-            app/src/main/res/layout/activity_main.xml
-            app/src/main/res/layout/item_log_entry.xml
-            app/src/main/res/values/colors.xml
-            app/src/main/res/values/strings.xml
-            app/src/main/res/values/styles.xml
-            app/src/main/res/values/themes.xml
-            app/src/main/AndroidManifest.xml
+            build.gradle.kts
             app/build.gradle.kts
+            app/src/main/AndroidManifest.xml
+            app/src/main/java/hu/szujo/hucallblocker/MainActivity.kt
+            app/src/main/res/values/styles.xml
             README.md
             CHANGELOG.md
