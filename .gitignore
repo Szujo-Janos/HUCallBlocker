@@ -1,0 +1,24 @@
+# Helyi fejlesztési és fordítási fájlok
+.gradle/
+.idea/
+*.iml
+local.properties
+build/
+**/build/
+captures/
+.externalNativeBuild/
+.cxx/
+.DS_Store
+Thumbs.db
+*.hprof
+*.apk
+*.aab
+
+# Privát aláírókulcsok és jelszavak
+*.jks
+*.keystore
+*.p12
+*.pfx
+*release_key_info*.txt
+keystore.properties
+signing-private/

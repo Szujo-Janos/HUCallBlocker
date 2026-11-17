@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.HUCallBlocker" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:statusBarColor">#F5F8FC</item>
+        <item name="android:navigationBarColor">#FFFFFF</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+    <style name="Theme.HUCallBlocker.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#051721</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_small</item>
+        <item name="android:statusBarColor">#051721</item>
+        <item name="android:navigationBarColor">#051721</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="postSplashScreenTheme">@style/Theme.HUCallBlocker</item>
+    </style>
+</resources>

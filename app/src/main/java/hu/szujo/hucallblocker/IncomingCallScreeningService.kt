@@ -1,0 +1,39 @@
+package hu.szujo.hucallblocker
+
+import android.telecom.Call
+import android.telecom.CallScreeningService
+
+class IncomingCallScreeningService : CallScreeningService() {
+    override fun onScreenCall(callDetails: Call.Details) {
+        if (callDetails.callDirection != Call.Details.DIRECTION_INCOMING) return
+
+        val number = callDetails.handle?.schemeSpecificPart
+        var shouldBlock = false
+        try {
+            if (SettingsStore.enabled(this) &&
+                ForeignNumberClassifier.classify(number) == ForeignNumberClassifier.Classification.FOREIGN
+            ) {
+                val isException = SettingsStore.allowContacts(this) &&
+                    !number.isNullOrBlank() && ContactChecker.isSaved(this, number)
+                shouldBlock = !isException
+            }
+        } catch (_: Exception) {
+            shouldBlock = false
+        }
+
+        respondToCall(
+            callDetails,
+            CallResponse.Builder()
+                .setDisallowCall(shouldBlock)
+                .setRejectCall(shouldBlock)
+                .setSkipCallLog(false)
+                .setSkipNotification(shouldBlock)
+                .build()
+        )
+
+        if (shouldBlock) {
+            runCatching { BlockedCallStore.add(this, number ?: "ismeretlen") }
+        }
+        runCatching { ProtectionNotification.sync(this) }
+    }
+}

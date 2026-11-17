@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HU Call Blocker</string>
+    <string name="header_subtitle">clean call protection</string>
+
+    <string name="status_active">VÉDELEM AKTÍV</string>
+    <string name="status_permission">ENGEDÉLYEZÉS KELL</string>
+    <string name="status_paused">SZÜNETEL</string>
+    <string name="status_unsupported">NEM TÁMOGATOTT</string>
+
+    <string name="hero_title_active">Minden rendben</string>
+    <string name="hero_subtitle_active">A külföldi számok szűrése bekapcsolva.</string>
+    <string name="hero_title_permission">Kapcsold be</string>
+    <string name="hero_subtitle_permission">A rendszer még nem adta meg a hívásszűrési szerepkört.</string>
+    <string name="hero_title_paused">Pillanatnyilag szünetel</string>
+    <string name="hero_subtitle_paused">A szerepkör aktív, de a blokkolás kapcsolója ki van kapcsolva.</string>
+    <string name="hero_title_unsupported">Nem elérhető</string>
+    <string name="hero_subtitle_unsupported">Ez a készülék nem támogatja a hivatalos hívásszűrést.</string>
+
+    <string name="enable_call_screening">Hívásszűrés engedélyezése</string>
+    <string name="enable_notifications">Értesítések engedélyezése</string>
+
+    <string name="settings_title">BEÁLLÍTÁSOK</string>
+    <string name="toggle_block_title">Külföldi számok tiltása</string>
+    <string name="toggle_block_subtitle">+36 mehet, a többi nemzetközi szám tiltva.</string>
+    <string name="toggle_contacts_title">Mentett névjegyek átengedése</string>
+    <string name="toggle_contacts_subtitle">A külföldi ismerősök kivételt kapnak.</string>
+    <string name="contacts_hint_allow_saved">A mentett külföldi számok átengedve.</string>
+    <string name="contacts_hint_system_skip">Az Android a mentett számokat külön kezeli.</string>
+    <string name="contacts_hint_block_saved">A mentett külföldi számok is blokkolhatók.</string>
+    <string name="contacts_hint_permission_needed">A mentett számok tiltásához névjegyengedély kell.</string>
+
+    <string name="icon_title">ÁLLAPOTSOR IKON</string>
+    <string name="icon_row_title">HU pajzs</string>
+    <string name="icon_status_enabled">Az állapotsori jelzés aktív.</string>
+    <string name="icon_status_permission_needed">Adj értesítési engedélyt az ikonhoz.</string>
+    <string name="icon_status_inactive">A védelem bekapcsolásakor jelenik meg.</string>
+
+    <string name="logs_title">NAPLÓ</string>
+    <string name="logs_headline">Blokkolt hívások</string>
+    <string name="logs_subtitle">Az utolsó 100 esemény</string>
+    <string name="logs_empty">Még nincs blokkolt hívás.</string>
+    <string name="log_blocked">TILTVA</string>
+    <string name="clear_logs">Napló törlése</string>
+    <string name="clear_logs_title">Napló törlése</string>
+    <string name="clear_logs_message">Az alkalmazás naplója törlődik, a telefon híváslistája nem.</string>
+    <string name="clear">Törlés</string>
+    <string name="cancel">Mégse</string>
+    <string name="ok">Rendben</string>
+    <string name="role_not_supported">A készülék nem támogatja a hivatalos Android hívásszűrést.</string>
+
+    <string name="notification_title">HU Call Blocker · Védelem aktív</string>
+    <string name="notification_text">A külföldi számok szűrése be van kapcsolva.</string>
+    <string name="notification_channel_name">Védelmi állapot</string>
+    <string name="notification_channel_description">Állapotsori jelzés az aktív hívásvédelemhez.</string>
+
+    <string name="footer_text">A szűrés az előhívót figyeli. Rejtett vagy helyi formátumú számokat nem tilt automatikusan.</string>
+</resources>
