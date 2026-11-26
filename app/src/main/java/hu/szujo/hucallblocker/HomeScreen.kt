@@ -106,17 +106,17 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
     AnimatedVisibility(visible, enter = fadeIn(tween(250))) {
-        Surface(shape = RoundedCornerShape(29.dp), color = ShieldColors.navy) {
+        Surface(shape = RoundedCornerShape(29.dp), color = ShieldColors.heroMint) {
             Box(
                 Modifier.fillMaxWidth().background(
-                    Brush.linearGradient(listOf(ShieldColors.navy, ShieldColors.darkGreen))
+                    Brush.linearGradient(listOf(ShieldColors.heroPale, ShieldColors.heroMint))
                 )
             ) {
                 Canvas(Modifier.matchParentSize()) {
                     val radius = size.minDimension * 0.53f
                     val center = androidx.compose.ui.geometry.Offset(size.width * 0.89f, size.height * 0.12f)
-                    drawCircle(ShieldColors.mint.copy(alpha = 0.08f), radius, center)
-                    drawCircle(ShieldColors.mint.copy(alpha = 0.13f), radius * 0.63f,
+                    drawCircle(ShieldColors.heroInk.copy(alpha = 0.06f), radius, center)
+                    drawCircle(ShieldColors.heroInk.copy(alpha = 0.12f), radius * 0.63f,
                         center, style = Stroke(width = 1.dp.toPx()))
                 }
                 Column(
@@ -125,23 +125,23 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
                 ) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.size(7.dp).background(
-                            if (state.active) ShieldColors.mint else ShieldColors.amber, CircleShape))
+                            if (state.active) ShieldColors.heroInk else ShieldColors.heroWarning, CircleShape))
                         Spacer(Modifier.width(8.dp))
                         Text(stateLabel, fontSize = 11.sp, letterSpacing = 1.2.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (state.active) ShieldColors.mint else ShieldColors.amber)
+                            color = if (state.active) ShieldColors.heroInk else ShieldColors.heroWarning)
                     }
                     Spacer(Modifier.height(if (compact) 3.dp else 8.dp))
                     Box(Modifier.size(if (compact) 102.dp else 139.dp),
                         contentAlignment = Alignment.Center) {
                         Canvas(Modifier.fillMaxSize()) {
                             val center = androidx.compose.ui.geometry.Offset(size.width/2, size.height/2)
-                            drawCircle(ShieldColors.mint.copy(alpha = 0.08f),
+                            drawCircle(ShieldColors.heroInk.copy(alpha = 0.06f),
                                 size.minDimension * 0.48f, center)
-                            drawCircle(ShieldColors.mint.copy(alpha = 0.38f),
+                            drawCircle(ShieldColors.heroInk.copy(alpha = 0.25f),
                                 size.minDimension * 0.41f, center,
                                 style = Stroke(width = 1.5.dp.toPx()))
-                            drawCircle(ShieldColors.mint.copy(alpha = 0.20f),
+                            drawCircle(ShieldColors.heroInk.copy(alpha = 0.15f),
                                 size.minDimension * 0.34f, center,
                                 style = Stroke(width = 1.dp.toPx()))
                         }
@@ -152,10 +152,10 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
                         )
                     }
                     Spacer(Modifier.height(3.dp))
-                    Text(title, style = MaterialTheme.typography.headlineMedium, color = Color.White)
+                    Text(title, style = MaterialTheme.typography.headlineMedium, color = ShieldColors.navy)
                     Spacer(Modifier.height(7.dp))
                     Text(hint, style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFFB8D3CD),
+                        color = Color(0xFF294D45),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center)
                     if (state.roleAvailable && !state.roleHeld) {
@@ -164,8 +164,8 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
                             onClick = enableRole,
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = ShieldColors.mint,
-                                contentColor = ShieldColors.navy
+                                containerColor = ShieldColors.heroInk,
+                                contentColor = Color.White
                             )
                         ) { Text("Hívásszűrés engedélyezése") }
                     }

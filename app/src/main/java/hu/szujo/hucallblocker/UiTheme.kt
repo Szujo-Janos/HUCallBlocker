@@ -18,7 +18,11 @@ internal enum class ThemeMode(val title: String) {
 internal object ShieldColors {
     val navy = Color(0xFF091F2A)
     val darkGreen = Color(0xFF123A35)
-    val mint = Color(0xFF31DAB3)
+    val heroPale = Color(0xFFF0FFF8)
+    val heroMint = Color(0xFFBDEFD9)
+    val heroInk = Color(0xFF00664D)
+    val heroWarning = Color(0xFF845000)
+    val mint = Color(0xFF27E5AB)
     val softMint = Color(0xFFDDF8EF)
     val red = Color(0xFFCB4458)
     val amber = Color(0xFFF0B44E)

@@ -1,6 +1,12 @@
-# HU Call Blocker 1.1.7
+# HU Call Blocker 1.1.8
 
 Magyar nyelvű, reklámmentes Android-hívásszűrő. Android 10-től használható, internetkapcsolat nélkül.
+
+## 1.1.8 – pontosított embléma és világosabb színvilág
+
+- Az elfogadott eredeti kép kontúrjaiból vektorizált embléma minden ikonváltozathoz.
+- Világos mentazöld főoldali védelmi kártya, kontrasztos sötét szövegek és állapotjelzések.
+- A sötét téma többi felülete és a hívásszűrő működése változatlan.
 
 ## 1.1.7 – új embléma
 
