@@ -77,6 +77,9 @@ internal fun LogScreen(
                                 modifier = Modifier.padding(top = 10.dp, bottom = 5.dp))
                         }
                         items(calls, key = { "${it.timestamp}:${it.number}" }) { entry ->
+                            val countryLabel = remember(entry.number, entry.countryIso) {
+                                CountryDialing.label(entry.number, entry.countryIso, withFlag = true)
+                            }
                             Surface(
                                 shape = RoundedCornerShape(18.dp),
                                 color = MaterialTheme.colorScheme.surface,
@@ -98,7 +101,7 @@ internal fun LogScreen(
                                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                                         Text(entry.number, style = MaterialTheme.typography.titleMedium)
                                         Text(
-                                            "${CountryDialing.label(entry.number, entry.countryIso)} · ${entry.reason}",
+                                            "$countryLabel · ${entry.reason}",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             maxLines = 2
@@ -134,6 +137,9 @@ internal fun LogScreen(
         )
     }
     selected?.let { entry ->
+        val countryLabel = remember(entry.number, entry.countryIso) {
+            CountryDialing.label(entry.number, entry.countryIso, withFlag = true)
+        }
         val normalized = NumberRules.normalize(entry.number)
         val inAllow = normalized != null && normalized in state.allowedNumbers
         val inBlock = normalized != null && normalized in state.blockedNumbers
@@ -142,7 +148,7 @@ internal fun LogScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text("Hívás részletei", style = MaterialTheme.typography.headlineMedium)
                 Text(entry.number, style = MaterialTheme.typography.titleLarge)
-                SmallTag(CountryDialing.label(entry.number, entry.countryIso), highlighted = true)
+                SmallTag(countryLabel, highlighted = true)
                 Text("Tiltás oka: ${entry.reason}", style = MaterialTheme.typography.bodyMedium)
                 Text(dayFormat.format(Date(entry.timestamp)) + " " + clock.format(Date(entry.timestamp)),
                     style = MaterialTheme.typography.bodySmall,

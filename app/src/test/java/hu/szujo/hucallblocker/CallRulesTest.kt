@@ -29,6 +29,25 @@ class CallRulesTest {
         assertTrue(decide(countries = setOf("DE")).block)
     }
 
+    @Test fun countryExceptionUsesResolvedRegion() {
+        val german = "+4915112345678"
+        val germany = CountryDialing.region(german)
+        assertEquals("DE", germany)
+        assertFalse(decide(number = german, countries = setOf("DE"), region = germany).block)
+        assertTrue(decide(number = german, countries = setOf("GB"), region = germany).block)
+        val guernsey = "+441481256789"
+        val gg = CountryDialing.region(guernsey)
+        assertEquals("GG", gg)
+        assertFalse(decide(number = guernsey, countries = setOf("GG"), region = gg).block)
+        assertTrue(decide(number = guernsey, countries = setOf("GB"), region = gg).block)
+        val global = "+80012345678"
+        assertTrue(decide(number = global, countries = setOf("GB", "DE"),
+            region = CountryDialing.region(global)).block)
+        val ambiguous = "+10000000000"
+        assertTrue(decide(number = ambiguous, countries = setOf("US", "CA"),
+            region = CountryDialing.region(ambiguous)).block)
+    }
+
     @Test fun savedContactExceptionRequiresToggle() {
         assertFalse(decide(saved = true, contacts = true).block)
         assertTrue(decide(saved = true, contacts = false).block)
