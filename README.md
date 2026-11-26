@@ -1,6 +1,10 @@
-# HU Call Blocker 1.2.0
+# HU Call Blocker 1.2.1
 
 Magyar nyelvű, reklámmentes Android-hívásszűrő. Android 10-től használható, internetkapcsolat nélkül.
+
+## 1.2.1 – kompakt névjegy
+
+- Egyetlen Névjegy menüpont az Opciókban, logós információs panellel, verzióval, fejlesztői névvel, adatvédelemmel és GitHub-hivatkozással.
 
 ## 1.2.0 – letisztult védelem és névjegy
 
