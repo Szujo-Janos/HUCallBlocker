@@ -22,6 +22,9 @@ internal data class ScreenState(
     val enabled: Boolean = true,
     val allowContacts: Boolean = true,
     val contactsPermission: Boolean = false,
+    val allowedCountries: Set<String> = emptySet(),
+    val allowedNumbers: Set<String> = emptySet(),
+    val blockedNumbers: Set<String> = emptySet(),
     val notifyAllowed: Boolean = false,
     val calls: List<BlockedCallStore.Entry> = emptyList()
 ) {
@@ -40,7 +43,7 @@ class MainActivity : ComponentActivity() {
     private val contactLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) SettingsStore.setAllowContacts(this, false)
+        SettingsStore.setAllowContacts(this, granted)
         refresh()
     }
     private val notificationLauncher = registerForActivityResult(
@@ -85,12 +88,25 @@ class MainActivity : ComponentActivity() {
                         if (state.active && !state.notifyAllowed) askNotifications()
                     },
                     setContacts = {
-                        if (!it && !ContactChecker.hasPermission(this)) {
+                        if (it && !ContactChecker.hasPermission(this)) {
                             contactLauncher.launch(Manifest.permission.READ_CONTACTS)
                         } else {
                             SettingsStore.setAllowContacts(this, it)
                             refresh()
                         }
+                    },
+                    setCountryAllowed = { iso, allowed ->
+                        SettingsStore.setCountryAllowed(this, iso, allowed)
+                        refresh()
+                    },
+                    addNumber = { number, allowed ->
+                        val saved = SettingsStore.addNumber(this, number, allowed)
+                        if (saved) refresh()
+                        saved
+                    },
+                    removeNumber = { number, allowed ->
+                        SettingsStore.removeNumber(this, number, allowed)
+                        refresh()
                     },
                     requestNotifications = ::askNotifications,
                     openPrivateBlocking = ::openPrivateBlocking,
@@ -132,6 +148,9 @@ class MainActivity : ComponentActivity() {
             enabled = SettingsStore.enabled(this),
             allowContacts = SettingsStore.allowContacts(this),
             contactsPermission = ContactChecker.hasPermission(this),
+            allowedCountries = SettingsStore.allowedCountries(this),
+            allowedNumbers = SettingsStore.allowedNumbers(this),
+            blockedNumbers = SettingsStore.blockedNumbers(this),
             notifyAllowed = ProtectionNotification.canNotify(this),
             calls = BlockedCallStore.read(this)
         )

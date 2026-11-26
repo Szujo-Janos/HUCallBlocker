@@ -1,48 +1,32 @@
-# HU Call Blocker 1.1.4
+# HU Call Blocker 1.1.5
 
-Android 10+ (API 29), magyar nyelvű offline hívásszűrő. 
-A korábbi XML-es felületet Kotlin Jetpack Compose / Material 3 váltja. 
-A hívásszűrő és az előző verziókban mentett kapcsolók változatlanok.
+Magyar nyelvű, reklámmentes Android-hívásszűrő. Android 10-től használható, internetkapcsolat nélkül.
 
-## v1.1.4: 
-- Verziószám-kijelzés javítva.
+## Mit tud?
 
-## Kijelzőhöz igazodó felület (1.1.3)
-- A fejléc az Android státuszsávja és a kijelzőkivágás alá kerül a Compose safeDrawing inset kezelésével.
-- Kompaktabb főoldal kisebb képernyőn; nagy betűméretnél megmarad a görgethetőség.
-- A teljes szélességű frissítésgomb helyett fejlécben lévő frissítésikon.
-- Az alsó navigációt nem módosítja; az értesítési és hívásszűrési működés változatlan.
+- Külföldi, nemzetközi előhívójú hívások blokkolása
+- Magyar (+36) hívások átengedése
+- Mentett névjegyek átengedése, ha megadod a névjegyengedélyt
+- Országonkénti kivételek (például Németország és Ausztria)
+- Saját engedélyezett és tiltott számok
+- Helyi napló országgal, tiltási okkal és gyors engedélyezéssel
 
-## Rendszer-splash finomítása (1.1.2)
-- Külön, 288×288 dp-es vektorból készülő, kis méretű HU-védjegy az Android natív splashhez.
-- Az eredeti alkalmazásikon és a második, forgó fénygyűrűs Compose-intro változatlan.
-- A natív splash elhalványulása 160-ról 85 ms-ra csökkent; a rendszer saját indítási ideje készülékfüggő.
-- Nem hoz létre új splash Activityt, nincs dupla várakozás.
+A saját tiltólista az engedélyezett számoknál és országoknál is erősebb. A saját engedélyezett számok és a mentett névjegyek megelőzik az országszűrést. A magyar számok csak akkor tiltódnak, ha kifejezetten a saját tiltólistára teszed őket. A szűrés kikapcsolásával minden saját szabály szünetel.
 
-## Új animált indítás (1.1.1)
-- Egységes sötét Android-rendszer splash és teljes képernyős Compose animáció
-- Lélegző HU-pajzs, forgó kettős fénygyűrű, lágyan belépő felirat és indítási fénycsík
-- A főképernyő először az animáció befejezésekor jelenik meg; a háttérben a hívásszűrés működése változatlan
-- Nincs hálózati betöltés vagy kötelező várakozás a hívásszűrésnek; az animáció csak az app újraindításakor jelenik meg
+A számok országát az előhívó alapján azonosítjuk: ez nem a hívó földrajzi helye, és a hamisított hívószámokat sem ismeri fel biztosan. A rejtett hívószámok tiltását Androidon a telefon saját beállításaiban lehet kezelni, ha támogatott.
 
-## Megújult kezelőfelület
-- natív AndroidX SplashScreen HU logóval, rövid kilépési animációval
-- animált státuszkártya, finom Compose átmenetek
-- alsó navigáció: Főoldal / Szűrés / Napló / Beállítások
-- HU pajzsikon az alkalmazásban és az állapotsori értesítésben
+## Beüzemelés
 
-## Működés
-1. Telepítés után a **Hívásszűrés engedélyezése** gombbal kérd a rendszer szerepkörét.
-2. A +36 vagy 0036 kezdetű megjelenő számok átjöhetnek; más külföldi nemzetközi számok tiltva vannak.
-3. A **Mentett névjegyek átengedése** opció külön beállítható.
-4. Ha az Android 13+ értesítési engedélyt megadod, a HU állapotsori jelzés is látható lehet.
+Telepítés után engedélyezd a hívásszűrési szerepkört. A mentett külföldi ismerősök felismeréséhez külön névjegyengedély szükséges. Az állapotsori pajzshoz az értesítéseket is engedélyezheted.
 
-### Rejtett / magán számok
-Az Android a PRESENTATION_RESTRICTED, UNKNOWN, UNAVAILABLE és PAYPHONE hívásokat **nem adja át a CallScreeningService-nek**. Így ez az alkalmazás közvetlenül nem tudja őket blokkolni. A **Szűrés → Rejtett számok → Telefon beállításai** gomb a rendszer blokkolási képernyőjét (ha elérhető) vagy a telefon appot nyitja. Ott a gyártó telefonalkalmazásában lehet külön a „Rejtett / Ismeretlen” blokkolást bekapcsolni. A gomb **nem** állítja automatikusan ezt a rendszerszabályt.
-A „rejtett” nem egyenlő a nem mentett, de látható számmal.
+A korábbi beállítások és naplóbejegyzések megmaradnak az alkalmazás frissítésekor.
 
 ## Fordítás
-Android Studio: JDK 17, Android SDK 36, Gradle Sync, **Build → Rebuild Project**.
-CI: `./gradlew testDebugUnitTest assembleDebug`.
 
-Dokumentáció: https://developer.android.com/reference/android/telecom/CallScreeningService
+Android Studio, JDK 17, Android SDK 36.
+
+```powershell
+.\gradlew.bat testDebugUnitTest assembleDebug
+```
+
+A kiadási APK aláírásához ugyanazt a kulcsot kell használni, mint a korábbi verzióhoz: [aláírási útmutató](docs/alairas.md).

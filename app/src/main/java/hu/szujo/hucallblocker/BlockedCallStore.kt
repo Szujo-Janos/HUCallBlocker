@@ -4,20 +4,30 @@ import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Csak helyi napló, legfeljebb 100 eseménnyel. */
+/** Helyben tárolt napló, legfeljebb 100 bejegyzéssel. Régi rekordok is olvashatók. */
 internal object BlockedCallStore {
     private const val FILE = "blocked_calls"
     private const val KEY = "entries"
     private const val MAX_ENTRIES = 100
-    data class Entry(val number: String, val timestamp: Long)
+
+    data class Entry(
+        val number: String,
+        val timestamp: Long,
+        val countryIso: String? = null,
+        val reason: String = "Külföldi szám"
+    )
 
     @Synchronized
-    fun add(context: Context, number: String) {
+    fun add(context: Context, number: String, countryIso: String?, reason: String) {
         val prefs = context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
         val previous = runCatching { JSONArray(prefs.getString(KEY, "[]")) }
             .getOrDefault(JSONArray())
-        val next = JSONArray()
-        next.put(JSONObject().put("number", number).put("time", System.currentTimeMillis()))
+        val item = JSONObject()
+            .put("number", number)
+            .put("time", System.currentTimeMillis())
+            .put("reason", reason)
+        if (countryIso != null) item.put("country", countryIso)
+        val next = JSONArray().put(item)
         for (i in 0 until minOf(previous.length(), MAX_ENTRIES - 1)) {
             previous.optJSONObject(i)?.let { next.put(it) }
         }
@@ -32,7 +42,12 @@ internal object BlockedCallStore {
             val obj = records.optJSONObject(i) ?: return@mapNotNull null
             val number = obj.optString("number")
             val time = obj.optLong("time")
-            if (number.isBlank() || time <= 0L) null else Entry(number, time)
+            if (number.isBlank() || time <= 0L) null else Entry(
+                number = number,
+                timestamp = time,
+                countryIso = obj.optString("country").takeIf { it.isNotBlank() },
+                reason = obj.optString("reason").takeIf { it.isNotBlank() } ?: "Külföldi szám"
+            )
         }
     }
 

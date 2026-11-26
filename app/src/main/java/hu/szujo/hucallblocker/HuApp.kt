@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -57,6 +58,9 @@ internal fun HuApp(
     enableRole: () -> Unit,
     setEnabled: (Boolean) -> Unit,
     setContacts: (Boolean) -> Unit,
+    setCountryAllowed: (String, Boolean) -> Unit,
+    addNumber: (String, Boolean) -> Boolean,
+    removeNumber: (String, Boolean) -> Unit,
     requestNotifications: () -> Unit,
     openPrivateBlocking: () -> Unit,
     clearCalls: () -> Unit,
@@ -90,8 +94,11 @@ internal fun HuApp(
             Crossfade(targetState = page, animationSpec = tween(260), label = "tabFade") { selected ->
                 when (selected) {
                     0 -> Home(state, padding, enableRole)
-                    1 -> Filters(state, padding, setEnabled, setContacts, openPrivateBlocking)
-                    2 -> LogPage(state, padding, clearCalls, refresh)
+                    1 -> Filters(
+                        state, padding, setEnabled, setContacts, setCountryAllowed,
+                        addNumber, removeNumber, openPrivateBlocking
+                    )
+                    2 -> LogPage(state, padding, clearCalls, refresh) { number -> addNumber(number, true) }
                     else -> Options(state, padding, enableRole, requestNotifications, openPrivateBlocking)
                 }
             }
@@ -123,7 +130,7 @@ private fun Header(active: Boolean, onRefresh: () -> Unit) {
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             Text("HU CALL BLOCKER", color = ink, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
-            Text("CALL PROTECTION", color = grey, fontSize = 9.sp, letterSpacing = 1.3.sp)
+            Text("HÍVÁSVÉDELEM", color = grey, fontSize = 9.sp, letterSpacing = 1.3.sp)
         }
         Box(Modifier.size(9.dp).background(if (active) mint else red, CircleShape))
         Spacer(Modifier.width(8.dp))
@@ -310,17 +317,43 @@ private fun InfoTile(icon: ImageVector, title: String, subtitle: String, click: 
 private fun Filters(
     state: ScreenState, padding: PaddingValues,
     setEnabled: (Boolean) -> Unit, setContacts: (Boolean) -> Unit,
+    setCountryAllowed: (String, Boolean) -> Unit,
+    addNumber: (String, Boolean) -> Boolean,
+    removeNumber: (String, Boolean) -> Unit,
     openPrivateBlocking: () -> Unit
 ) {
     var showHelp by remember { mutableStateOf(false) }
+    var showCountries by remember { mutableStateOf(false) }
+    var showNumbers by remember { mutableStateOf(false) }
     Column(
         Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 17.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        SectionTitle("Szűrés", "Döntsd el, kit engedünk át.")
-        OptionSwitch(Icons.Filled.Block, "Külföldi számok", "A nem +36-os nemzetközi számok", state.enabled, setEnabled)
-        OptionSwitch(Icons.Filled.Phone, "Mentett névjegyek", "Külföldi ismerősök átengedése", state.allowContacts, setContacts)
+        SectionTitle("Szűrés", "Külföldi hívások és kivételek")
+        OptionSwitch(
+            Icons.Filled.Block, "Külföldi számok tiltása",
+            "A saját szabályok csak bekapcsolt szűrésnél érvényesek.",
+            state.enabled, setEnabled
+        )
+        OptionSwitch(
+            Icons.Filled.Phone, "Mentett névjegyek átengedése",
+            if (state.contactsPermission) "Külföldi ismerősök hívhatnak"
+            else "Bekapcsoláshoz névjegyengedély szükséges",
+            state.allowContacts && state.contactsPermission, setContacts
+        )
+        InfoTile(
+            Icons.Filled.Public, "Engedélyezett országok",
+            if (state.allowedCountries.isEmpty()) "Nincs kivétel"
+            else state.allowedCountries.size.toString() + " ország engedélyezve",
+            click = { showCountries = true }
+        )
+        InfoTile(
+            Icons.Filled.List, "Saját számlisták",
+            state.allowedNumbers.size.toString() + " engedélyezett · " +
+                state.blockedNumbers.size.toString() + " tiltott",
+            click = { showNumbers = true }
+        )
         Spacer(Modifier.height(5.dp))
         SectionTitle("Rejtett számok", "A Telefon alkalmazás beállítása")
         InfoTile(
@@ -331,6 +364,14 @@ private fun Filters(
         )
         Text("A rejtett számokat az Android nem adja át ennek a szűrőnek.",
             color = grey, fontSize = 12.sp, lineHeight = 18.sp)
+    }
+    if (showCountries) {
+        CountryPicker(state.allowedCountries, setCountryAllowed) { showCountries = false }
+    }
+    if (showNumbers) {
+        NumberListEditor(
+            state.allowedNumbers, state.blockedNumbers, addNumber, removeNumber
+        ) { showNumbers = false }
     }
     if (showHelp) {
         AlertDialog(
@@ -370,7 +411,10 @@ private fun OptionSwitch(
 }
 
 @Composable
-private fun LogPage(state: ScreenState, padding: PaddingValues, clear: () -> Unit, refresh: () -> Unit) {
+private fun LogPage(
+    state: ScreenState, padding: PaddingValues, clear: () -> Unit,
+    refresh: () -> Unit, allowNumber: (String) -> Boolean
+) {
     var confirm by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 20.dp, vertical = 17.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -414,9 +458,23 @@ private fun LogPage(state: ScreenState, padding: PaddingValues, clear: () -> Uni
                             Spacer(Modifier.width(13.dp))
                             Column(Modifier.weight(1f)) {
                                 Text(item.number, color = ink, fontWeight = FontWeight.Bold)
-                                Text(format.format(Date(item.timestamp)), color = grey, fontSize = 12.sp)
+                                Text(
+                                    (CountryDialing.name(item.countryIso)
+                                        ?: CountryDialing.label(item.number)) + " · " + item.reason,
+                                    color = grey, fontSize = 12.sp, lineHeight = 16.sp
+                                )
+                                Text(format.format(Date(item.timestamp)), color = grey, fontSize = 11.sp)
                             }
-                            Text("TILTVA", color = red, fontWeight = FontWeight.Bold, fontSize = 10.sp)
+                            if ((NumberRules.normalize(item.number)?.let { it in state.allowedNumbers } == true)) {
+                                Text("Engedélyezve", color = forest, fontSize = 10.sp)
+                            } else if (NumberRules.normalize(item.number) != null) {
+                                IconButton(onClick = { allowNumber(item.number) }) {
+                                    Icon(
+                                        Icons.Filled.PersonAdd, "Szám engedélyezése",
+                                        tint = forest
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -473,5 +531,170 @@ private fun Options(
             },
             dismissButton = { TextButton(onClick = { showHelp = false }) { Text("Mégse") } }
         )
+    }
+}
+
+@Composable
+private fun CountryPicker(
+    allowed: Set<String>,
+    setAllowed: (String, Boolean) -> Unit,
+    close: () -> Unit
+) {
+    var query by rememberSaveable { mutableStateOf("") }
+    val filtered = remember(query) {
+        CountryDialing.countries.filter {
+            it.name.contains(query.trim(), ignoreCase = true) ||
+                it.iso.contains(query.trim(), ignoreCase = true) ||
+                ("+" + it.callingCode).contains(query.trim())
+        }
+    }
+    Dialog(onDismissRequest = close) {
+        Surface(
+            shape = RoundedCornerShape(22.dp),
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.86f)
+        ) {
+            Column(Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "Engedélyezett országok",
+                        color = ink, fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = close) {
+                        Icon(Icons.Filled.Close, "Bezárás")
+                    }
+                }
+                Text(
+                    "A kiválasztott országokból érkező hívások átjöhetnek.",
+                    fontSize = 12.sp, color = grey
+                )
+                Spacer(Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = query, onValueChange = { query = it },
+                    label = { Text("Ország keresése") },
+                    modifier = Modifier.fillMaxWidth(), singleLine = true
+                )
+                Spacer(Modifier.height(8.dp))
+                LazyColumn(Modifier.weight(1f)) {
+                    items(filtered, key = { it.iso }) { country ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .clickable { setAllowed(country.iso, country.iso !in allowed) }
+                                .padding(vertical = 3.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = country.iso in allowed,
+                                onCheckedChange = { setAllowed(country.iso, it) }
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Column {
+                                Text(country.name, fontSize = 14.sp, color = ink)
+                                Text("+" + country.callingCode, fontSize = 11.sp, color = grey)
+                            }
+                        }
+                    }
+                }
+                TextButton(onClick = close, modifier = Modifier.align(Alignment.End)) {
+                    Text("Kész")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NumberListEditor(
+    allowed: Set<String>,
+    blocked: Set<String>,
+    addNumber: (String, Boolean) -> Boolean,
+    removeNumber: (String, Boolean) -> Unit,
+    close: () -> Unit
+) {
+    var mode by rememberSaveable { mutableIntStateOf(0) }
+    var input by rememberSaveable { mutableStateOf("") }
+    var saveFailed by remember { mutableStateOf(false) }
+    val isAllow = mode == 0
+    val numbers = if (isAllow) allowed else blocked
+    Dialog(onDismissRequest = close) {
+        Surface(
+            shape = RoundedCornerShape(22.dp),
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.86f)
+        ) {
+            Column(Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "Saját számlisták",
+                        fontSize = 20.sp, color = ink, fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = close) { Icon(Icons.Filled.Close, "Bezárás") }
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(
+                        selected = isAllow,
+                        onClick = { mode = 0; saveFailed = false },
+                        label = { Text("Engedélyezett") }
+                    )
+                    FilterChip(
+                        selected = !isAllow,
+                        onClick = { mode = 1; saveFailed = false },
+                        label = { Text("Tiltott") }
+                    )
+                }
+                OutlinedTextField(
+                    value = input,
+                    onValueChange = { input = it; saveFailed = false },
+                    label = { Text("Telefonszám") },
+                    placeholder = { Text("+49 151 12345678") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    "Nemzetközi előhívóval (+ vagy 00), magyar számnál 06-tal is.",
+                    color = grey, fontSize = 11.sp
+                )
+                Spacer(Modifier.height(8.dp))
+                Button(
+                    onClick = {
+                        if (addNumber(input, isAllow)) {
+                            input = ""
+                            saveFailed = false
+                        } else saveFailed = true
+                    },
+                    enabled = NumberRules.normalize(input) != null,
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(if (isAllow) "Engedélyezés" else "Tiltás") }
+                if (saveFailed) {
+                    Text("Nem menthető. Egy listában legfeljebb 250 szám lehet.",
+                        color = red, fontSize = 12.sp)
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    numbers.size.toString() + " mentett szám",
+                    fontWeight = FontWeight.Bold, color = ink, fontSize = 13.sp
+                )
+                Spacer(Modifier.height(5.dp))
+                LazyColumn(Modifier.weight(1f)) {
+                    items(numbers.sorted()) { number ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(number, color = ink, fontSize = 13.sp, modifier = Modifier.weight(1f))
+                            IconButton(onClick = { removeNumber(number, isAllow) }) {
+                                Icon(Icons.Filled.Delete, "Szám törlése", tint = grey)
+                            }
+                        }
+                    }
+                }
+                TextButton(onClick = close, modifier = Modifier.align(Alignment.End)) {
+                    Text("Kész")
+                }
+            }
+        }
     }
 }

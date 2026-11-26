@@ -13,8 +13,8 @@ android {
         applicationId = "hu.szujo.hucallblocker"
         minSdk = 29
         targetSdk = 35
-        versionCode = 11
-        versionName = "1.1.4"
+        versionCode = 12
+        versionName = "1.1.5"
     }
 
     buildFeatures {
@@ -40,6 +40,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.activity:activity-compose:1.12.3")
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.googlecode.libphonenumber:libphonenumber:9.0.44")
     debugImplementation("androidx.compose.ui:ui-tooling")
     testImplementation("junit:junit:4.13.2")
 }
