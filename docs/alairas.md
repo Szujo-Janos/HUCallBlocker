@@ -1,6 +1,6 @@
 # Kiadási aláírás
 
-A HU Call Blocker 1.2.1 kiadás csomagazonosítója `hu.szujo.hucallblocker`, verziókódja `18`.
+A HU Call Blocker 1.2.2 kiadás csomagazonosítója `hu.szujo.hucallblocker`, verziókódja `19`.
 
 A kiadói kulcsot és a jelszavát **ne töltsd fel GitHubra vagy más nyilvános helyre**. Minden későbbi, közvetlenül terjesztett frissítést ugyanazzal a kulccsal kell aláírni. A kulcs elvesztése esetén a meglévő telepítések nem frissíthetők ezzel az aláírással.
 

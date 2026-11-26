@@ -60,10 +60,13 @@ internal fun HomeScreen(state: ScreenState, enableRole: () -> Unit) {
                 val format = remember {
                     SimpleDateFormat("MM. dd.  HH:mm", Locale.forLanguageTag("hu-HU"))
                 }
+                val countryLabel = remember(latest.number, latest.countryIso) {
+                    CountryDialing.label(latest.number, latest.countryIso, withFlag = true)
+                }
                 FeatureRow(
                     Icons.Filled.History,
                     "Legutóbbi blokkolás",
-                    "${CountryDialing.label(latest.number, latest.countryIso)} · " +
+                    "$countryLabel · " +
                         format.format(Date(latest.timestamp))
                 )
             }
