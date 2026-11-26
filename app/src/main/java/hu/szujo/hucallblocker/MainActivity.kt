@@ -33,6 +33,7 @@ internal data class ScreenState(
 
 class MainActivity : ComponentActivity() {
     private var state by mutableStateOf(ScreenState())
+    private var requestedContactSetting: Boolean? = null
 
     private val roleLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -43,7 +44,9 @@ class MainActivity : ComponentActivity() {
     private val contactLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        SettingsStore.setAllowContacts(this, granted)
+        val desired = requestedContactSetting
+        requestedContactSetting = null
+        if (granted && desired != null) SettingsStore.setAllowContacts(this, desired)
         refresh()
     }
     private val notificationLauncher = registerForActivityResult(
@@ -88,12 +91,17 @@ class MainActivity : ComponentActivity() {
                         if (state.active && !state.notifyAllowed) askNotifications()
                     },
                     setContacts = {
-                        if (it && !ContactChecker.hasPermission(this)) {
+                        if (!ContactChecker.hasPermission(this)) {
+                            requestedContactSetting = it
                             contactLauncher.launch(Manifest.permission.READ_CONTACTS)
                         } else {
                             SettingsStore.setAllowContacts(this, it)
                             refresh()
                         }
+                    },
+                    requestContactsPermission = {
+                        requestedContactSetting = null
+                        contactLauncher.launch(Manifest.permission.READ_CONTACTS)
                     },
                     setCountryAllowed = { iso, allowed ->
                         SettingsStore.setCountryAllowed(this, iso, allowed)

@@ -58,6 +58,7 @@ internal fun HuApp(
     enableRole: () -> Unit,
     setEnabled: (Boolean) -> Unit,
     setContacts: (Boolean) -> Unit,
+    requestContactsPermission: () -> Unit,
     setCountryAllowed: (String, Boolean) -> Unit,
     addNumber: (String, Boolean) -> Boolean,
     removeNumber: (String, Boolean) -> Unit,
@@ -95,8 +96,8 @@ internal fun HuApp(
                 when (selected) {
                     0 -> Home(state, padding, enableRole)
                     1 -> Filters(
-                        state, padding, setEnabled, setContacts, setCountryAllowed,
-                        addNumber, removeNumber, openPrivateBlocking
+                        state, padding, setEnabled, setContacts, requestContactsPermission,
+                        setCountryAllowed, addNumber, removeNumber, openPrivateBlocking
                     )
                     2 -> LogPage(state, padding, clearCalls, refresh) { number -> addNumber(number, true) }
                     else -> Options(state, padding, enableRole, requestNotifications, openPrivateBlocking)
@@ -317,6 +318,7 @@ private fun InfoTile(icon: ImageVector, title: String, subtitle: String, click: 
 private fun Filters(
     state: ScreenState, padding: PaddingValues,
     setEnabled: (Boolean) -> Unit, setContacts: (Boolean) -> Unit,
+    requestContactsPermission: () -> Unit,
     setCountryAllowed: (String, Boolean) -> Unit,
     addNumber: (String, Boolean) -> Boolean,
     removeNumber: (String, Boolean) -> Unit,
@@ -339,9 +341,16 @@ private fun Filters(
         OptionSwitch(
             Icons.Filled.Phone, "Mentett névjegyek átengedése",
             if (state.contactsPermission) "Külföldi ismerősök hívhatnak"
-            else "Bekapcsoláshoz névjegyengedély szükséges",
-            state.allowContacts && state.contactsPermission, setContacts
+            else "A mentett hívások szűréséhez engedély kell",
+            state.allowContacts, setContacts
         )
+        if (!state.contactsPermission) {
+            InfoTile(
+                Icons.Filled.VpnKey, "Névjegyengedély",
+                "Szükséges a mentett hívók szűréséhez",
+                click = requestContactsPermission
+            )
+        }
         InfoTile(
             Icons.Filled.Public, "Engedélyezett országok",
             if (state.allowedCountries.isEmpty()) "Nincs kivétel"
