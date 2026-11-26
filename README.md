@@ -1,6 +1,13 @@
-# HU Call Blocker 1.1.6
+# HU Call Blocker 1.1.7
 
 Magyar nyelvű, reklámmentes Android-hívásszűrő. Android 10-től használható, internetkapcsolat nélkül.
+
+## 1.1.7 – új embléma
+
+- Új, vektoros HU-pajzs telefonkagylóval és tiltásjelzéssel.
+- Egységes logó a fejlécen, főoldalon, mindkét indítóképernyőn és az alkalmazásikonon.
+- Adaptív, monokróm és egyszerűsített állapotsori változat; a hívásszűrés változatlan.
+- SVG embléma: [hu-call-blocker.svg](docs/branding/hu-call-blocker.svg).
 
 ## 1.1.6 – új megjelenés
 
