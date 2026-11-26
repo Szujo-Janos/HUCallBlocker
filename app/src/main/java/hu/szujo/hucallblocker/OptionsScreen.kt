@@ -89,11 +89,23 @@ internal fun OptionsScreen(
 }
 
 private const val PROJECT_URL = "https://github.com/Szujo-Janos/HUCallBlocker"
+private const val PRIVACY_URL = "https://szujo-janos.github.io/HUCallBlocker/adatvedelem.html"
 
 @Composable
 private fun AboutDialog(onDismiss: () -> Unit) {
     val uriHandler = LocalUriHandler.current
-    var showUrl by rememberSaveable { mutableStateOf(false) }
+    var fallbackUrl by rememberSaveable { mutableStateOf<String?>(null) }
+    fun openLink(url: String) {
+        try {
+            uriHandler.openUri(url)
+        } catch (_: IllegalArgumentException) {
+            fallbackUrl = url
+        } catch (_: android.content.ActivityNotFoundException) {
+            fallbackUrl = url
+        } catch (_: SecurityException) {
+            fallbackUrl = url
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -161,17 +173,7 @@ private fun AboutDialog(onDismiss: () -> Unit) {
                     )
                 }
                 OutlinedButton(
-                    onClick = {
-                        try {
-                            uriHandler.openUri(PROJECT_URL)
-                        } catch (_: IllegalArgumentException) {
-                            showUrl = true
-                        } catch (_: android.content.ActivityNotFoundException) {
-                            showUrl = true
-                        } catch (_: SecurityException) {
-                            showUrl = true
-                        }
-                    },
+                    onClick = { openLink(PROJECT_URL) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(Icons.Filled.Code, null, Modifier.size(19.dp))
@@ -180,10 +182,18 @@ private fun AboutDialog(onDismiss: () -> Unit) {
                     Spacer(Modifier.width(6.dp))
                     Icon(Icons.Filled.OpenInNew, null, Modifier.size(16.dp))
                 }
-                if (showUrl) {
+                OutlinedButton(
+                    onClick = { openLink(PRIVACY_URL) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Filled.Lock, null, Modifier.size(19.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Adatvédelmi tájékoztató")
+                }
+                fallbackUrl?.let { address ->
                     SelectionContainer {
                         Text(
-                            PROJECT_URL,
+                            address,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

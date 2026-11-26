@@ -13,8 +13,8 @@ android {
         applicationId = "hu.szujo.hucallblocker"
         minSdk = 29
         targetSdk = 36
-        versionCode = 20
-        versionName = "1.2.3"
+        versionCode = 21
+        versionName = "1.2.4"
     }
 
     buildFeatures {

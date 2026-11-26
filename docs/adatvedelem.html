@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>HU Call Blocker – Adatvédelmi tájékoztató</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#091f2a;background:#f4f8f7;line-height:1.65}
+*{box-sizing:border-box}body{margin:0}main{max-width:800px;margin:36px auto;padding:32px;background:white;border-radius:24px}
+header{display:flex;align-items:center;gap:20px;border-bottom:1px solid #b8cfc9;padding-bottom:20px}header img{width:70px;height:70px}
+h1{font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.2;margin:0}h2{font-size:1.2rem;margin-top:28px}p,li{overflow-wrap:anywhere}a{color:#00664d}small{color:#506a67}
+@media(prefers-color-scheme:dark){:root{background:#0b161c;color:#f1f9f6}main{background:#14232b}a{color:#27e5ab}small{color:#a8c4be}}
+@media(max-width:600px){main{margin:0;padding:24px;border-radius:0}header{gap:12px}}
+</style>
+</head>
+<body><main>
+<header><img src="branding/hu-call-blocker.svg" alt="" width="70" height="70"><div><h1>Adatvédelmi tájékoztató</h1><small>HU Call Blocker · 2026. november 26.</small></div></header>
+<h2>1. Az alkalmazás és a fejlesztő</h2>
+<p>A HU Call Blocker (csomagazonosító: hu.szujo.hucallblocker) magyar nyelvű Android-hívásszűrő. Fejlesztője Szujó János. Az alkalmazás alapvető funkciója a bejövő hívások helyi szűrése a felhasználó által meghatározott szabályok szerint.</p>
+<h2>2. Milyen adatokhoz fér hozzá az alkalmazás?</h2>
+<ul>
+<li><strong>Bejövő hívószám:</strong> az Android hívásszűrési szerepkörén keresztül kapott számot a program a tiltási és engedélyezési szabályok alkalmazásához, illetve a számozási terv szerinti ország meghatározásához használja. Az országjelzés nem a hívó tényleges helyzetét mutatja.</li>
+<li><strong>Névjegyek:</strong> a felhasználó külön engedélyével, bekapcsolt névjegykivétel esetén a program helyben ellenőrzi, hogy a hívószám szerepel-e a telefon névjegyei között. A névjegyzéket nem másolja át saját adatbázisba, és nem továbbítja.</li>
+<li><strong>Blokkolt hívások naplója:</strong> helyben tárolja az utolsó legfeljebb 100 blokkolt hívás számát, időpontját, tiltási okát és – ha meghatározható – országkódját.</li>
+<li><strong>Beállítások:</strong> a védelem állapota, a névjegykivétel, az engedélyezett országok és a saját engedélyezett, illetve tiltott telefonszámok a készüléken maradnak.</li>
+</ul>
+<p>A program nem rögzíti és nem hallgatja meg a beszélgetéseket, nem kér helymeghatározási hozzáférést, és nem igényel felhasználói fiókot.</p>
+<h2>3. Engedélyek és felhasználásuk</h2>
+<ul>
+<li><strong>Hívásszűrési szerepkör:</strong> a bejövő hívások engedélyezése vagy elutasítása.</li>
+<li><strong>READ_CONTACTS:</strong> opcionális névjegyellenőrzés az engedélyezett hívások felismeréséhez.</li>
+<li><strong>POST_NOTIFICATIONS:</strong> opcionális értesítés a védelem állapotáról.</li>
+<li><strong>RECEIVE_BOOT_COMPLETED:</strong> a védelmi állapotjelzés helyreállítása a készülék újraindítása után.</li>
+</ul>
+<p>A névjegy- és értesítési engedélyek az Android alkalmazásbeállításaiban visszavonhatók. A hívásszűrés a programban kikapcsolható, a hívásszűrési szerepkör pedig a rendszerbeállításokban megszüntethető.</p>
+<h2>4. Adattovábbítás és biztonság</h2>
+<p>A hívásszűrés internetkapcsolat nélkül működik. A jelenlegi alkalmazás nem tartalmaz internetengedélyt, reklámot, analitikai vagy követési szolgáltatást, és nem küldi el a hívásadatokat, névjegyeket vagy szabályokat a fejlesztőnek vagy harmadik félnek. A napló és a beállítások az Android alkalmazás számára elkülönített helyi tárhelyén vannak; az alkalmazás saját biztonsági mentése le van tiltva. Ez nem jelent külön alkalmazásszintű titkosítást vagy teljes védelmet egy feltört készülékkel szemben.</p>
+<p>Az Android és a telefon saját hívásnaplója önállóan kezelhet hívásadatokat. A Google Play az alkalmazás terjesztésével kapcsolatos adatokat saját feltételei szerint kezeli. A külső GitHub-hivatkozások és ez a tájékoztató a böngészőben nyílnak meg; a GitHub a weboldal látogatásakor a saját <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">adatvédelmi tájékoztatója</a> szerint járhat el. Az alkalmazás nem csatol hívásadatokat ezekhez a hivatkozásokhoz.</p>
+<h2>5. Adatmegőrzés és törlés</h2>
+<p>A napló az utolsó 100 blokkolt hívást tartja meg; új bejegyzés esetén a legrégebbi kiesik. A teljes saját napló a Napló menü törlés gombjával törölhető. A saját engedélyezési és tiltási szabályok a Szűrés menüben eltávolíthatók. Az alkalmazásadatok törlése az Android beállításaiban vagy az alkalmazás eltávolítása a helyi adatokat is törli. A telefon rendszerhívásnaplóját ez nem törli. Nincs szerveroldali felhasználói fiók vagy fejlesztőnél tárolt hívásadatbázis.</p>
+<h2>6. Kapcsolat és adatvédelmi kérdések</h2>
+<p>Adatvédelmi kérdéssel vagy az alkalmazás adatkezelésével kapcsolatos kéréssel a Google Play áruházi adatlapon megadott fejlesztői kapcsolattartási e-mail címen lehet Szujó Jánoshoz fordulni. Általános, személyes adatot nem tartalmazó kérdés a <a href="https://github.com/Szujo-Janos/HUCallBlocker/issues">projekt nyilvános hibajegyfelületén</a> is jelezhető. Kérjük, nyilvános hibajegyben ne ossz meg telefonszámokat, névjegyeket vagy más személyes adatokat.</p>
+<h2>7. Változások</h2>
+<p>A tájékoztató az alkalmazás adatkezelésének változása esetén frissül. A mindenkori változat ezen az oldalon olvasható.</p>
+</main></body></html>
