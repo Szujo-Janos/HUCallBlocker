@@ -33,6 +33,7 @@ jobs:
           base64 -d .github/ui_payload.b64 > /tmp/ui116.tar.xz
           echo "621d69dc7a60f7e839255ff6a76a0af6cbb73f1de398f99758c512925335818f  /tmp/ui116.tar.xz" | sha256sum -c -
           tar -xJf /tmp/ui116.tar.xz
+          sed -i 's/compose-bom:2026.11.01/compose-bom:2025.10.01/' app/build.gradle.kts
           git status --short
       - name: Tesztek és APK fordítása
         run: ./gradlew --no-daemon testDebugUnitTest assembleDebug assembleRelease
