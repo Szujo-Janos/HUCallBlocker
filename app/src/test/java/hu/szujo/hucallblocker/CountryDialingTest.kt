@@ -7,7 +7,7 @@ import org.junit.Test
 
 class CountryDialingTest {
     @Test fun resolvesCountriesFromPhoneMetadata() {
-        assertEquals("GB", CountryDialing.region("+44 7911 123456"))
+        assertEquals("GB", CountryDialing.region("+44 20 7946 0958"))
         assertEquals("DE", CountryDialing.region("0049 151 12345678"))
         assertEquals("AT", CountryDialing.region("+43 664 1234567"))
         assertEquals("US", CountryDialing.region("+1 202 555 0142"))
