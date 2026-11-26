@@ -15,6 +15,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -28,7 +30,6 @@ internal data class ScreenState(
     val allowedCountries: Set<String> = emptySet(),
     val allowedNumbers: Set<String> = emptySet(),
     val blockedNumbers: Set<String> = emptySet(),
-    val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val notifyAllowed: Boolean = false,
     val calls: List<BlockedCallStore.Entry> = emptyList()
 ) {
@@ -79,12 +80,14 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf(true)
             }
 
+            val dark = isSystemInDarkTheme()
+            LaunchedEffect(showIntro, dark) {
+                if (!showIntro) setMainBars()
+            }
+
             if (showIntro) {
                 SplashExperience(
-                    onFinished = {
-                        showIntro = false
-                        setMainBars()
-                    }
+                    onFinished = { showIntro = false }
                 )
             } else {
                 HuApp(
@@ -121,11 +124,6 @@ class MainActivity : ComponentActivity() {
                         SettingsStore.removeNumber(this, number, allowed)
                         refresh()
                     },
-                    setTheme = { mode ->
-                        SettingsStore.setThemeMode(this, mode)
-                        refresh()
-                        setMainBars()
-                    },
                     requestNotifications = ::askNotifications,
                     openPrivateBlocking = ::openPrivateBlocking,
                     clearCalls = { BlockedCallStore.clear(this); refresh() },
@@ -143,12 +141,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setMainBars() {
-        val dark = when (SettingsStore.themeMode(this)) {
-            ThemeMode.DARK -> true
-            ThemeMode.LIGHT -> false
-            ThemeMode.SYSTEM -> resources.configuration.uiMode and
-                Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-        }
+        val dark = resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         @Suppress("DEPRECATION")
         window.statusBarColor = if (dark) android.graphics.Color.rgb(11, 22, 28)
                                 else android.graphics.Color.rgb(244, 248, 247)
@@ -179,7 +173,6 @@ class MainActivity : ComponentActivity() {
             allowedCountries = SettingsStore.allowedCountries(this),
             allowedNumbers = SettingsStore.allowedNumbers(this),
             blockedNumbers = SettingsStore.blockedNumbers(this),
-            themeMode = SettingsStore.themeMode(this),
             notifyAllowed = ProtectionNotification.canNotify(this),
             calls = BlockedCallStore.read(this)
         )

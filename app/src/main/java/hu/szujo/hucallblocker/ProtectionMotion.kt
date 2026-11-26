@@ -13,10 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.nativeCanvas
@@ -31,23 +28,6 @@ private val samplePrefixes = listOf("+44 7•••", "+49 15•••", "+33 6�
 private const val CYCLE_MS = 3200
 private const val HIT = 0.58f
 private const val END = 0.86f
-
-@Composable
-internal fun ProtectionCheckWatermark(modifier: Modifier = Modifier) {
-    Canvas(modifier) {
-        val stroke = min(33.dp.toPx(), size.minDimension * 0.16f)
-        val inset = stroke / 2f + 2.dp.toPx()
-        val path = Path().apply {
-            moveTo(inset, size.height * 0.48f)
-            lineTo(size.width * 0.36f, size.height * 0.80f)
-            lineTo(size.width - inset, size.height * 0.16f)
-        }
-        drawPath(
-            path, Color.White.copy(alpha = 0.58f),
-            style = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round)
-        )
-    }
-}
 
 /**
  * One masked international example approaches the shield at a time.

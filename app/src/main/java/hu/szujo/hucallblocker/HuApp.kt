@@ -38,14 +38,13 @@ internal fun HuApp(
     setCountryAllowed: (String, Boolean) -> Unit,
     addNumber: (String, Boolean) -> Boolean,
     removeNumber: (String, Boolean) -> Unit,
-    setTheme: (ThemeMode) -> Unit,
     requestNotifications: () -> Unit,
     openPrivateBlocking: () -> Unit,
     clearCalls: () -> Unit,
     refresh: () -> Unit
 ) {
     var page by rememberSaveable { mutableIntStateOf(0) }
-    ShieldTheme(state.themeMode) {
+    ShieldTheme {
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val wide = maxWidth >= 600.dp
             Scaffold(
@@ -108,7 +107,7 @@ internal fun HuApp(
                             2 -> LogScreen(state, clearCalls, refresh, addNumber)
                             else -> OptionsScreen(
                                 state, enableRole, requestNotifications,
-                                openPrivateBlocking, setTheme
+                                openPrivateBlocking
                             )
                         }
                     }

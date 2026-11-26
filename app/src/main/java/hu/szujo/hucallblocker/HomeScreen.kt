@@ -101,8 +101,12 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
                     Brush.linearGradient(listOf(ShieldColors.heroPale, ShieldColors.heroMint))
                 )
             ) {
-                if (state.active) {
-                    ProtectionCheckWatermark(Modifier.matchParentSize())
+                Canvas(Modifier.matchParentSize()) {
+                    val radius = size.minDimension * 0.53f
+                    val center = androidx.compose.ui.geometry.Offset(size.width * 0.89f, size.height * 0.12f)
+                    drawCircle(ShieldColors.heroInk.copy(alpha = 0.06f), radius, center)
+                    drawCircle(ShieldColors.heroInk.copy(alpha = 0.12f), radius * 0.63f,
+                        center, style = Stroke(width = 1.dp.toPx()))
                 }
                 Column(
                     Modifier.fillMaxWidth().padding(if (compact) 17.dp else 23.dp),

@@ -11,10 +11,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-internal enum class ThemeMode(val title: String) {
-    SYSTEM("Rendszer"), LIGHT("Világos"), DARK("Sötét")
-}
-
 internal object ShieldColors {
     val navy = Color(0xFF091F2A)
     val darkGreen = Color(0xFF123A35)
@@ -80,12 +76,8 @@ private val shieldTypography = Typography(
 )
 
 @Composable
-internal fun ShieldTheme(mode: ThemeMode, content: @Composable () -> Unit) {
-    val dark = when (mode) {
-        ThemeMode.SYSTEM -> isSystemInDarkTheme()
-        ThemeMode.DARK -> true
-        ThemeMode.LIGHT -> false
-    }
+internal fun ShieldTheme(content: @Composable () -> Unit) {
+    val dark = isSystemInDarkTheme()
     MaterialTheme(
         colorScheme = if (dark) darkColors else lightColors,
         typography = shieldTypography,

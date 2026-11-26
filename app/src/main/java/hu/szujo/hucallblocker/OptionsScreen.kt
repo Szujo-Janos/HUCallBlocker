@@ -9,6 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -16,10 +18,12 @@ internal fun OptionsScreen(
     state: ScreenState,
     enableRole: () -> Unit,
     requestNotifications: () -> Unit,
-    openPrivateBlocking: () -> Unit,
-    setTheme: (ThemeMode) -> Unit
+    openPrivateBlocking: () -> Unit
 ) {
     var showHiddenHelp by remember { mutableStateOf(false) }
+    var showGitHubLink by remember { mutableStateOf(false) }
+    val uriHandler = LocalUriHandler.current
+    val githubUrl = "https://github.com/Szujo-Janos/HUCallBlocker"
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(horizontal = 18.dp, vertical = 17.dp),
@@ -28,33 +32,7 @@ internal fun OptionsScreen(
     ) {
         Column(Modifier.fillMaxWidth().widthIn(max = 760.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            PageHeading("Opciók", "Személyre szabás és engedélyek")
-            GroupHeading("Megjelenés")
-            Surface(
-                shape = tileShape,
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(Modifier.padding(17.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("Színtéma", style = MaterialTheme.typography.titleMedium)
-                    Text("Válassz világos, sötét vagy rendszer szerinti nézetet.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ThemeMode.entries.forEach { mode ->
-                            FilterChip(
-                                selected = state.themeMode == mode,
-                                onClick = { setTheme(mode) },
-                                label = { Text(mode.title) },
-                                leadingIcon = if (state.themeMode == mode) {
-                                    { Icon(Icons.Filled.Check, null, Modifier.size(15.dp)) }
-                                } else null
-                            )
-                        }
-                    }
-                }
-            }
+            PageHeading("Opciók", "Engedélyek és alkalmazásinformációk")
             GroupHeading("Jogosultságok")
             FeatureRow(
                 Icons.Filled.Security,
@@ -81,8 +59,38 @@ internal fun OptionsScreen(
                 "Offline működés · nincs fiók vagy reklám")
             FeatureRow(Icons.Filled.Info, "HU Call Blocker",
                 "Verzió: ${BuildConfig.VERSION_NAME}")
+            FeatureRow(Icons.Filled.Person, "Fejlesztő", "Szujó János")
+            FeatureRow(
+                Icons.Filled.Code, "GitHub", "Szujo-Janos/HUCallBlocker",
+                onClick = {
+                    try {
+                        uriHandler.openUri(githubUrl)
+                    } catch (_: IllegalArgumentException) {
+                        showGitHubLink = true
+                    } catch (_: android.content.ActivityNotFoundException) {
+                        showGitHubLink = true
+                    } catch (_: SecurityException) {
+                        showGitHubLink = true
+                    }
+                }
+            )
             Spacer(Modifier.height(10.dp))
         }
+    }
+    if (showGitHubLink) {
+        AlertDialog(
+            onDismissRequest = { showGitHubLink = false },
+            title = { Text("GitHub") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("A hivatkozás nem nyitható meg automatikusan. A cím másolható:")
+                    SelectionContainer { Text(githubUrl) }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showGitHubLink = false }) { Text("Bezárás") }
+            }
+        )
     }
     if (showHiddenHelp) {
         AlertDialog(
