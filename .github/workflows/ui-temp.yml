@@ -1,0 +1,53 @@
+name: UI 1.1.6 ellenőrzés
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ui-temp.yml']
+permissions:
+  contents: write
+jobs:
+  ellenorzes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Projekt letöltése
+        uses: actions/checkout@v4
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Android SDK 36
+        shell: bash
+        run: |
+          SDKMANAGER="$(command -v sdkmanager || true)"
+          if [ -z "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -1)"
+          fi
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0"
+      - name: Felület előkészítése
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .github/ui_payload.b64 > /tmp/ui116.tar.xz
+          echo "621d69dc7a60f7e839255ff6a76a0af6cbb73f1de398f99758c512925335818f  /tmp/ui116.tar.xz" | sha256sum -c -
+          tar -xJf /tmp/ui116.tar.xz
+          git status --short
+      - name: Tesztek és APK fordítása
+        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug assembleRelease
+      - name: Kiadási APK mentése
+        uses: actions/upload-artifact@v4
+        with:
+          name: HUCallBlocker-1.1.6-alairatlan
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          retention-days: 7
+          if-no-files-found: error
+      - name: Ellenőrzött forrás véglegesítése
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add README.md docs/alairas.md app
+          git rm -q .github/ui_payload.b64 .github/workflows/ui-temp.yml
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'feat: UI 1.1.6'
+          git push origin HEAD:main
