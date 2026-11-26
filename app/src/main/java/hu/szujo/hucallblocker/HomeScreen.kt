@@ -1,10 +1,6 @@
 package hu.szujo.hucallblocker
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Canvas
@@ -21,7 +17,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -97,12 +92,6 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
         !state.enabled -> "A beállított szabályok most nem blokkolnak hívásokat."
         else -> "A külföldi hívásokat a beállított szabályok szerint kezeljük."
     }
-    val motion = rememberInfiniteTransition(label = "pajzsfény")
-    val breathing by motion.animateFloat(
-        initialValue = 0.99f, targetValue = 1.045f,
-        animationSpec = infiniteRepeatable(tween(2100), RepeatMode.Reverse),
-        label = "pajzslélegzés"
-    )
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
     AnimatedVisibility(visible, enter = fadeIn(tween(250))) {
@@ -112,12 +101,8 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
                     Brush.linearGradient(listOf(ShieldColors.heroPale, ShieldColors.heroMint))
                 )
             ) {
-                Canvas(Modifier.matchParentSize()) {
-                    val radius = size.minDimension * 0.53f
-                    val center = androidx.compose.ui.geometry.Offset(size.width * 0.89f, size.height * 0.12f)
-                    drawCircle(ShieldColors.heroInk.copy(alpha = 0.06f), radius, center)
-                    drawCircle(ShieldColors.heroInk.copy(alpha = 0.12f), radius * 0.63f,
-                        center, style = Stroke(width = 1.dp.toPx()))
+                if (state.active) {
+                    ProtectionCheckWatermark(Modifier.matchParentSize())
                 }
                 Column(
                     Modifier.fillMaxWidth().padding(if (compact) 17.dp else 23.dp),
@@ -132,9 +117,11 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
                             color = if (state.active) ShieldColors.heroInk else ShieldColors.heroWarning)
                     }
                     Spacer(Modifier.height(if (compact) 3.dp else 8.dp))
-                    Box(Modifier.size(if (compact) 102.dp else 139.dp),
+                    val fieldSize = if (compact) 102.dp else 139.dp
+                    val logoSize = if (compact) 78.dp else 94.dp
+                    Box(Modifier.fillMaxWidth().height(fieldSize),
                         contentAlignment = Alignment.Center) {
-                        Canvas(Modifier.fillMaxSize()) {
+                        Canvas(Modifier.size(fieldSize)) {
                             val center = androidx.compose.ui.geometry.Offset(size.width/2, size.height/2)
                             drawCircle(ShieldColors.heroInk.copy(alpha = 0.06f),
                                 size.minDimension * 0.48f, center)
@@ -145,10 +132,15 @@ private fun ProtectionHero(state: ScreenState, enableRole: () -> Unit, compact: 
                                 size.minDimension * 0.34f, center,
                                 style = Stroke(width = 1.dp.toPx()))
                         }
+                        if (state.active) {
+                            CallDefenseAnimation(
+                                logoSize = logoSize,
+                                modifier = Modifier.matchParentSize()
+                            )
+                        }
                         Image(
                             painterResource(R.drawable.ic_shield), "HU védelem",
-                            Modifier.size(if (compact) 78.dp else 94.dp)
-                                .scale(if (state.active) breathing else 1f)
+                            Modifier.size(logoSize)
                         )
                     }
                     Spacer(Modifier.height(3.dp))

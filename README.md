@@ -1,6 +1,12 @@
-# HU Call Blocker 1.1.8
+# HU Call Blocker 1.1.9
 
 Magyar nyelvű, reklámmentes Android-hívásszűrő. Android 10-től használható, internetkapcsolat nélkül.
+
+## 1.1.9 – animált hívásvédelem
+
+- Aktív védelemkor nagyméretű, áttetsző fehér pipa a védelmi kártya hátterében.
+- Maszkolt nemzetközi mintaszámok egyenként közelednek a pajzshoz, majd elpattannak és eltűnnek, rövid blokkolási hullámmal.
+- A szemléltető animáció nem használ valós hívásadatokat, és kikapcsolt védelemkor nem fut.
 
 ## 1.1.8 – pontosított embléma és világosabb színvilág
 
