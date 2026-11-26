@@ -115,11 +115,11 @@ internal fun SplashExperience(onFinished: () -> Unit) {
                 )
             }
             launch {
-                delay(600)
-                trackFill.animateTo(1f, animationSpec = tween(1190, easing = FastOutSlowInEasing))
+                delay(380)
+                trackFill.animateTo(1f, animationSpec = tween(620, easing = FastOutSlowInEasing))
             }
-            delay(2050)
-            screenOpacity.animateTo(0f, animationSpec = tween(270))
+            delay(1140)
+            screenOpacity.animateTo(0f, animationSpec = tween(180))
         }
         onFinished()
     }

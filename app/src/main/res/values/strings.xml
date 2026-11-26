@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">HU Call Blocker</string>
-    <string name="header_subtitle">clean call protection</string>
+    <string name="header_subtitle">Hívásvédelem</string>
 
     <string name="status_active">VÉDELEM AKTÍV</string>
     <string name="status_permission">ENGEDÉLYEZÉS KELL</string>

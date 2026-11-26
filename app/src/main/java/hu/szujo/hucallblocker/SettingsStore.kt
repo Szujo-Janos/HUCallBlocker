@@ -10,6 +10,15 @@ internal object SettingsStore {
     private const val KEY_ALLOW_NUMBERS = "allowed_numbers"
     private const val KEY_BLOCK_NUMBERS = "blocked_numbers"
     private const val MAX_RULES = 250
+    private const val KEY_THEME_MODE = "theme_mode"
+
+    fun themeMode(context: Context): ThemeMode =
+        runCatching { ThemeMode.valueOf(prefs(context).getString(KEY_THEME_MODE, "SYSTEM") ?: "SYSTEM") }
+            .getOrDefault(ThemeMode.SYSTEM)
+
+    fun setThemeMode(context: Context, mode: ThemeMode) {
+        prefs(context).edit().putString(KEY_THEME_MODE, mode.name).apply()
+    }
 
     private fun prefs(context: Context) = context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
 

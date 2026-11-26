@@ -7,6 +7,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.content.res.Configuration
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.WindowCompat
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +28,7 @@ internal data class ScreenState(
     val allowedCountries: Set<String> = emptySet(),
     val allowedNumbers: Set<String> = emptySet(),
     val blockedNumbers: Set<String> = emptySet(),
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val notifyAllowed: Boolean = false,
     val calls: List<BlockedCallStore.Entry> = emptyList()
 ) {
@@ -55,6 +59,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         // A rendszer natív splash-e azonos színű, mint a Compose intró.
@@ -116,6 +121,11 @@ class MainActivity : ComponentActivity() {
                         SettingsStore.removeNumber(this, number, allowed)
                         refresh()
                     },
+                    setTheme = { mode ->
+                        SettingsStore.setThemeMode(this, mode)
+                        refresh()
+                        setMainBars()
+                    },
                     requestNotifications = ::askNotifications,
                     openPrivateBlocking = ::openPrivateBlocking,
                     clearCalls = { BlockedCallStore.clear(this); refresh() },
@@ -133,12 +143,22 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setMainBars() {
-        window.statusBarColor = android.graphics.Color.rgb(245, 248, 252)
-        window.navigationBarColor = android.graphics.Color.WHITE
+        val dark = when (SettingsStore.themeMode(this)) {
+            ThemeMode.DARK -> true
+            ThemeMode.LIGHT -> false
+            ThemeMode.SYSTEM -> resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        }
         @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility =
-            android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
-                android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        window.statusBarColor = if (dark) android.graphics.Color.rgb(11, 22, 28)
+                                else android.graphics.Color.rgb(244, 248, 247)
+        @Suppress("DEPRECATION")
+        window.navigationBarColor = if (dark) android.graphics.Color.rgb(20, 35, 43)
+                                    else android.graphics.Color.WHITE
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = !dark
+            isAppearanceLightNavigationBars = !dark
+        }
     }
 
     override fun onResume() {
@@ -159,6 +179,7 @@ class MainActivity : ComponentActivity() {
             allowedCountries = SettingsStore.allowedCountries(this),
             allowedNumbers = SettingsStore.allowedNumbers(this),
             blockedNumbers = SettingsStore.blockedNumbers(this),
+            themeMode = SettingsStore.themeMode(this),
             notifyAllowed = ProtectionNotification.canNotify(this),
             calls = BlockedCallStore.read(this)
         )
